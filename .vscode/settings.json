@@ -1,20 +1,17 @@
 {
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[astro]": {
-    "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
   },
-  "[javascript]": {
-    "editor.formatOnSave": true,
-  },
-  "[typescript]": {
-    "editor.formatOnSave": true,
-  },
-  "[markdown]": {
-    "editor.formatOnSave": true,
-  },
-  "[mdx]": {
-    "editor.formatOnSave": true,
-  }
+  "eslint.validate": [
+    "javascript",
+    "astro",
+    "typescript",
+    "typescriptreact",
+    "markdown",
+    "mdx"
+  ]
 }

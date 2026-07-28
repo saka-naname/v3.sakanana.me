@@ -4,6 +4,14 @@ const config = {
   singleQuote: false,
   tabWidth: 2,
   useTabs: false,
+  overrides: [
+    {
+      files: "*.astro",
+      options: {
+        parser: "astro",
+      },
+    },
+  ],
 };
 
 export default config;

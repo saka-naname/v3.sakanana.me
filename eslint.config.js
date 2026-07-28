@@ -10,12 +10,7 @@ const sourceFiles = ["**/*.{js,mjs,cjs,jsx,ts,tsx,astro}"];
 export default [
   {
     name: "project/ignores",
-    ignores: [
-      ".astro/**",
-      "dist/**",
-      "node_modules/**",
-      "src/components/ui/**",
-    ],
+    ignores: [".astro/**", "dist/**", "node_modules/**"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
