@@ -8,5 +8,13 @@
   },
   "extends": [
     "markuplint:recommended"
+  ],
+  "nodeRules": [
+    {
+      "selector": "img",
+      "rules": {
+        "required-attr": "alt"
+      }
+    }
   ]
 }
