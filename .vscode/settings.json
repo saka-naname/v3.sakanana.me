@@ -4,7 +4,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
   },
   "eslint.validate": [
     "javascript",
@@ -13,5 +14,7 @@
     "typescriptreact",
     "markdown",
     "mdx"
-  ]
+  ],
+  "css.validate": false,
+  "stylelint.validate": ["css", "astro"]
 }

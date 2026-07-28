@@ -1,4 +1,8 @@
 {
+  "excludeFiles": [
+    "dist/",
+    "node_modules/"
+  ],
   "specs": {
     "\\.[jt]sx?$": "@markuplint/react-spec"
   },
