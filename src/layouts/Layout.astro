@@ -1,5 +1,7 @@
 ---
 import { Font } from "astro:assets";
+
+import Header from "../components/Header.astro";
 ---
 
 <!doctype html>
@@ -16,6 +18,7 @@ import { Font } from "astro:assets";
     <Font cssVariable="--font-suse-mono" />
   </head>
   <body>
+    <Header />
     <slot />
   </body>
 </html>

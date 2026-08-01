@@ -1,0 +1,44 @@
+---
+import "../styles/globals.css";
+---
+
+<header data-scroll-border></header>
+<div class="margin"></div>
+
+<style>
+  header {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 72px;
+    background-color: color-mix(
+      in srgb,
+      var(--color-background) 90%,
+      transparent
+    );
+    border-bottom: 1px solid transparent;
+    backdrop-filter: blur(6px);
+    transition: border-bottom 0.2s ease-out;
+
+    &.scrolled {
+      border-bottom: 1px solid
+        color-mix(in srgb, var(--color-border) 20%, transparent);
+    }
+  }
+
+  .margin {
+    margin-bottom: 72px;
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-scroll-border]");
+  const scrollThreshold = 24;
+
+  const updateHeaderBorder = () => {
+    header?.classList.toggle("scrolled", window.scrollY >= scrollThreshold);
+  };
+
+  updateHeaderBorder();
+  window.addEventListener("scroll", updateHeaderBorder, { passive: true });
+</script>

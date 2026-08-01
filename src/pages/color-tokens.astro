@@ -1,6 +1,8 @@
 ---
 import "../styles/globals.css";
 
+import Header from "../components/Header.astro";
+
 const primitiveTokens = [
   {
     name: "--color-empress-light-1",
@@ -105,6 +107,7 @@ const semanticTokens = [
     <title>Color tokens</title>
   </head>
   <body>
+    <Header />
     <main>
       <header class="page-header">
         <p class="eyebrow">Design system / Colors</p>
