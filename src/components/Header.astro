@@ -1,14 +1,31 @@
 ---
 import "../styles/globals.css";
+
+import Font from "astro/components/Font.astro";
 ---
 
-<header data-scroll-border></header>
+<head>
+  <meta charset="utf-8" />
+  <Font cssVariable="--font-kiwi-maru" />
+</head>
+
+<header data-scroll-border>
+  <div class="container">
+    <div class="logo">
+      <a href="/">sakanana.me</a>
+    </div>
+    <div class="menu"></div>
+  </div>
+</header>
 <div class="margin"></div>
 
 <style>
   header {
     position: fixed;
     top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100vw;
     height: 72px;
     background-color: color-mix(
@@ -23,6 +40,41 @@ import "../styles/globals.css";
     &.scrolled {
       border-bottom: 1px solid
         color-mix(in srgb, var(--color-border) 20%, transparent);
+    }
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    width: var(--container);
+  }
+
+  .logo {
+    a {
+      position: relative;
+      display: inline-block;
+      font-family: var(--font-kiwi-maru);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-empress-dark-2);
+      text-decoration: none;
+
+      &::after {
+        position: absolute;
+        right: 0;
+        bottom: -0.2em;
+        left: 0;
+        height: 1px;
+        content: "";
+        background-color: var(--color-empress-dark-2);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      &:is(:hover, :focus-visible)::after {
+        transform: scaleX(1);
+      }
     }
   }
 
