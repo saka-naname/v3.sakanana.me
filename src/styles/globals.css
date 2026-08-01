@@ -1,0 +1,19 @@
+:root {
+  /* Primitive tokens */
+  --color-empress-light-1: #999092;
+  --color-empress-base: #7f7678;
+  --color-empress-dark-1: #6c6465;
+  --color-empress-dark-2: #595153;
+  --color-dessert-base: #f7f7f4;
+  --color-dessert-dark-1: #e4e4df;
+  --color-dessert-dark-2: #d0d0ca;
+  --color-dessert-dark-3: #b7b7af;
+
+  /* Semantic tokens */
+  --color-background: var(--color-dessert-base);
+  --color-surface: #fff;
+  --color-text: #0f090b;
+  --color-primary: var(--color-empress-dark-1);
+  --color-primary-hover: var(--color-empress-dark-2);
+  --color-border: var(--color-empress-dark-2);
+}

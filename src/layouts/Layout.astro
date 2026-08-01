@@ -1,3 +1,7 @@
+---
+import { Font } from "astro:assets";
+---
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -7,6 +11,9 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>Astro Basics</title>
+    <Font cssVariable="--font-kiwi-maru" />
+    <Font cssVariable="--font-zen-kaku-gothic-antique" />
+    <Font cssVariable="--font-suse-mono" />
   </head>
   <body>
     <slot />
@@ -19,5 +26,11 @@
     width: 100%;
     height: 100%;
     margin: 0;
+  }
+</style>
+
+<style is:global>
+  * {
+    font-family: var(--font-zen-kaku-gothic-antique);
   }
 </style>
