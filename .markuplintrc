@@ -15,6 +15,12 @@
   ],
   "nodeRules": [
     {
+      "selector": "head:has(> Font)",
+      "rules": {
+        "permitted-contents": false
+      }
+    },
+    {
       "selector": "img",
       "rules": {
         "required-attr": "alt"
