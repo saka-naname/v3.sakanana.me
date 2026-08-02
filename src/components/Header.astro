@@ -14,6 +14,12 @@ const navigation = [
   { label: "About", href: "/about/" },
 ];
 
+const internalNavigation = navigation.filter(({ href }) =>
+  href.startsWith("/"),
+);
+const isCurrentPage = (href: string) =>
+  href === "/" ? pathname === href : pathname.startsWith(href);
+
 const socialLinks = [
   {
     label: "GitHub プロフィールを見る",
@@ -41,6 +47,22 @@ const socialLinks = [
 <header class="header site-header" data-scroll-border>
   <div class="container">
     <a class="logo" href="/">sakanana.me</a>
+    <nav class="desktop-menu" aria-label="メインナビゲーション">
+      <ul class="desktop-navigation">
+        {
+          internalNavigation.map(({ label, href }) => (
+            <li>
+              <a
+                href={href}
+                aria-current={isCurrentPage(href) ? "page" : undefined}
+              >
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
     <button
       class="menu-button"
       type="button"
@@ -91,7 +113,7 @@ const socialLinks = [
               <li>
                 <a
                   href={href}
-                  aria-current={pathname === href ? "page" : undefined}
+                  aria-current={isCurrentPage(href) ? "page" : undefined}
                 >
                   {label}
                 </a>
@@ -205,6 +227,49 @@ const socialLinks = [
     }
   }
 
+  .desktop-menu {
+    padding: 0;
+    margin-left: auto;
+  }
+
+  .desktop-navigation {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    a {
+      position: relative;
+      display: inline-block;
+      font-family: var(--font-suse-mono);
+      font-size: 0.9rem;
+      color: var(--color-empress-dark-2);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+
+      &::after {
+        position: absolute;
+        right: 0;
+        bottom: -0.2em;
+        left: 0;
+        height: 1px;
+        content: "";
+        background-color: currentcolor;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      &:is(:hover, :focus-visible, [aria-current="page"])::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+
   .mobile-menu {
     position: fixed;
     inset: 0;
@@ -272,7 +337,7 @@ const socialLinks = [
     }
   }
 
-  nav {
+  .drawer-panel nav {
     padding: 16px 28px;
   }
 
@@ -372,13 +437,17 @@ const socialLinks = [
   }
 
   @media (width < 768px) {
+    .desktop-menu {
+      display: none;
+    }
+
     .menu-button {
       display: grid;
     }
   }
 
   @media (width < 420px) {
-    nav {
+    .drawer-panel nav {
       padding: 12px 28px;
     }
 
@@ -394,6 +463,7 @@ const socialLinks = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .desktop-navigation a::after,
     .drawer-panel,
     .mobile-menu::backdrop {
       transition-duration: 0.01ms;
