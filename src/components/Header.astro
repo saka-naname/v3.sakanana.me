@@ -6,12 +6,10 @@ import { Icon } from "astro-icon/components";
 
 const pathname = Astro.url.pathname;
 
-const navigation = [
-  { label: "Work", href: "/work/" },
-  { label: "Illustration", href: "/illustration/" },
-  { label: "Music", href: "/music/" },
-  { label: "Blog", href: "https://v1.sakanana.me/blog" },
+const navigation: Array<{ label: string; href: string }> = [
   { label: "About", href: "/about/" },
+  { label: "Works", href: "/works/" },
+  { label: "Notes", href: "/notes/" },
 ];
 
 const internalNavigation = navigation.filter(({ href }) =>
