@@ -1,7 +1,7 @@
 ---
 import "../styles/globals.css";
 
-import Font from "astro/components/Font.astro";
+import { Font } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
 const pathname = Astro.url.pathname;
@@ -39,7 +39,8 @@ const socialLinks = [
 
 <head>
   <meta charset="utf-8" />
-  <Font cssVariable="--font-kiwi-maru" />
+  <Font cssVariable="--font-kiyosuna-sans" />
+  <Font cssVariable="--font-suse-mono" />
 </head>
 
 <header class="header site-header" data-scroll-border>
@@ -179,8 +180,8 @@ const socialLinks = [
   .logo {
     position: relative;
     display: inline-block;
-    font-family: var(--font-kiwi-maru);
-    font-size: 1.25rem;
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-empress-dark-2);
     text-decoration: none;

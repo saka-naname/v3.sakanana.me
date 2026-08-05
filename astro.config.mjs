@@ -2,14 +2,27 @@
 import { defineConfig, fontProviders } from "astro/config";
 import icon from "astro-icon";
 
-// https://astro.build/config
 export default defineConfig({
   fonts: [
     {
-      provider: fontProviders.fontsource(),
-      name: "Kiwi Maru",
-      cssVariable: "--font-kiwi-maru",
-      fallbacks: ["serif"],
+      provider: fontProviders.local(),
+      name: "KT Kiyosuna Sans",
+      cssVariable: "--font-kiyosuna-sans",
+      fallbacks: ["sans-serif"],
+      options: {
+        variants: [
+          {
+            weight: 300,
+            style: "normal",
+            src: ["./src/assets/fonts/KiyosunaSans-L-1.0.1.woff2"],
+          },
+          {
+            weight: 700,
+            style: "normal",
+            src: ["./src/assets/fonts/KiyosunaSans-B-1.0.1.woff2"],
+          },
+        ],
+      },
     },
     {
       provider: fontProviders.fontsource(),
