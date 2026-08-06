@@ -1,4 +1,6 @@
 ---
+import "../styles/globals.css";
+
 import { Font } from "astro:assets";
 
 import Header from "../components/Header.astro";
@@ -40,5 +42,9 @@ const { headerVariant = "default" } = Astro.props;
 <style is:global>
   * {
     font-family: var(--font-zen-kaku-gothic-antique);
+  }
+
+  body {
+    background-color: var(--color-background);
   }
 </style>
