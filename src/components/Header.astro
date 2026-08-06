@@ -4,6 +4,11 @@ import "../styles/globals.css";
 import { Font } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
+interface Props {
+  variant?: "default" | "top";
+}
+
+const { variant = "default" } = Astro.props;
 const pathname = Astro.url.pathname;
 
 const navigation: Array<{ label: string; href: string }> = [
@@ -43,7 +48,10 @@ const socialLinks = [
   <Font cssVariable="--font-suse-mono" />
 </head>
 
-<header class="header site-header" data-scroll-border>
+<header
+  class:list={["header", "site-header", { "top-variant": variant === "top" }]}
+  data-site-header
+>
   <div class="container">
     <a class="logo" href="/">sakanana.me</a>
     <div class="desktop-menu">
@@ -161,7 +169,7 @@ const socialLinks = [
   </div>
 </dialog>
 
-<div class="margin"></div>
+<div class:list={["margin", { "margin-disabled": variant === "top" }]}></div>
 
 <style>
   .header {
@@ -183,7 +191,24 @@ const socialLinks = [
       transparent
     );
     backdrop-filter: blur(6px);
-    transition: border-bottom 0.2s ease-out;
+    transition:
+      background-color 0.2s ease-out,
+      border-bottom-color 0.2s ease-out,
+      backdrop-filter 0.2s ease-out;
+
+    &.top-variant {
+      background-color: transparent;
+      backdrop-filter: blur(0);
+    }
+
+    &.top-variant:is(.has-background, .menu-open) {
+      background-color: color-mix(
+        in srgb,
+        var(--color-background) 90%,
+        transparent
+      );
+      backdrop-filter: blur(6px);
+    }
 
     &.scrolled {
       border-bottom-color: color-mix(
@@ -549,6 +574,10 @@ const socialLinks = [
     margin-bottom: 72px;
   }
 
+  .margin-disabled {
+    margin-bottom: 0;
+  }
+
   @media (width < 768px) {
     .desktop-menu {
       display: none;
@@ -579,14 +608,15 @@ const socialLinks = [
     .desktop-navigation a::after,
     .drawer-panel,
     .mobile-menu::backdrop,
-    .menu-icon span {
+    .menu-icon span,
+    .site-header {
       transition-duration: 0.01ms;
     }
   }
 </style>
 
 <script>
-  const header = document.querySelector<HTMLElement>("[data-scroll-border]");
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
   const dialog = document.querySelector<HTMLDialogElement>("#mobile-menu");
   const openButton =
     document.querySelector<HTMLButtonElement>("[data-menu-open]");
@@ -599,7 +629,8 @@ const socialLinks = [
     : 336;
   let closeTimer: number | undefined;
 
-  const updateHeaderBorder = () => {
+  const updateHeader = () => {
+    header?.classList.toggle("has-background", window.scrollY > 0);
     header?.classList.toggle("scrolled", window.scrollY >= scrollThreshold);
   };
 
@@ -609,6 +640,7 @@ const socialLinks = [
     window.clearTimeout(closeTimer);
     dialog.showModal();
     openButton?.setAttribute("aria-expanded", "true");
+    header?.classList.add("menu-open");
     document.documentElement.dataset.menuOpen = "";
 
     requestAnimationFrame(() => {
@@ -621,6 +653,7 @@ const socialLinks = [
 
     dialog.dataset.state = "closed";
     openButton?.setAttribute("aria-expanded", "false");
+    header?.classList.remove("menu-open");
     delete document.documentElement.dataset.menuOpen;
     window.clearTimeout(closeTimer);
 
@@ -630,8 +663,8 @@ const socialLinks = [
     );
   };
 
-  updateHeaderBorder();
-  window.addEventListener("scroll", updateHeaderBorder, { passive: true });
+  updateHeader();
+  window.addEventListener("scroll", updateHeader, { passive: true });
   openButton?.addEventListener("click", openMenu);
   closeButtons?.forEach((button) => {
     button.addEventListener("click", () => closeMenu());
@@ -643,6 +676,7 @@ const socialLinks = [
   dialog?.addEventListener("close", () => {
     dialog.dataset.state = "closed";
     openButton?.setAttribute("aria-expanded", "false");
+    header?.classList.remove("menu-open");
     delete document.documentElement.dataset.menuOpen;
   });
   window.matchMedia("(width >= 768px)").addEventListener("change", (event) => {

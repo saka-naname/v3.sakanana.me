@@ -2,6 +2,12 @@
 import { Font } from "astro:assets";
 
 import Header from "../components/Header.astro";
+
+interface Props {
+  headerVariant?: "default" | "top";
+}
+
+const { headerVariant = "default" } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,7 +23,7 @@ import Header from "../components/Header.astro";
     <Font cssVariable="--font-suse-mono" />
   </head>
   <body>
-    <Header />
+    <Header variant={headerVariant} />
     <slot />
   </body>
 </html>
