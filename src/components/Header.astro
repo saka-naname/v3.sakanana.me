@@ -202,6 +202,11 @@ const socialLinks = [
       backdrop-filter: blur(0);
     }
 
+    &.top-variant:not(.has-background, .menu-open) {
+      --header-foreground: var(--color-surface);
+      --header-foreground-hover: var(--color-surface);
+    }
+
     &.top-variant:is(.has-background, .menu-open) {
       background-color: color-mix(
         in srgb,
@@ -233,8 +238,9 @@ const socialLinks = [
     font-family: var(--font-kiyosuna-sans);
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-empress-dark-2);
+    color: var(--header-foreground, var(--color-empress-dark-2));
     text-decoration: none;
+    transition: color 0.2s ease-out;
 
     &::after {
       position: absolute;
@@ -243,7 +249,7 @@ const socialLinks = [
       left: 0;
       height: 1px;
       content: "";
-      background-color: var(--color-empress-dark-2);
+      background-color: currentcolor;
       transform: scaleX(0);
       transform-origin: left;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -281,7 +287,8 @@ const socialLinks = [
     display: block;
     width: 24px;
     height: 18px;
-    color: var(--color-empress-dark-2);
+    color: var(--header-foreground, var(--color-empress-dark-2));
+    transition: color 0.2s ease-out;
 
     span {
       position: absolute;
@@ -346,10 +353,11 @@ const socialLinks = [
       display: inline-block;
       font-family: var(--font-suse-mono);
       font-size: 0.9rem;
-      color: var(--color-empress-dark-2);
+      color: var(--header-foreground, var(--color-empress-dark-2));
       text-transform: uppercase;
       letter-spacing: 0.12em;
       text-decoration: none;
+      transition: color 0.2s ease-out;
 
       &::after {
         position: absolute;
@@ -394,12 +402,13 @@ const socialLinks = [
       width: 36px;
       height: 36px;
       font-size: 1.25rem;
-      color: var(--color-empress-dark-2);
+      color: var(--header-foreground, var(--color-empress-dark-2));
       text-decoration: none;
       border-radius: 999px;
+      transition: color 0.2s ease-out;
 
       &:is(:hover, :focus-visible) {
-        color: var(--color-text);
+        color: var(--header-foreground-hover, var(--color-text));
         background-color: color-mix(
           in srgb,
           var(--color-empress-light-1) 14%,
@@ -449,6 +458,12 @@ const socialLinks = [
   .mobile-menu[data-state="closed"] .dialog-header {
     background-color: transparent;
     border-bottom-color: transparent;
+  }
+
+  .site-header.top-variant:not(.has-background, .menu-open)
+    + .mobile-menu[data-state="closed"]
+    .dialog-header {
+    --header-foreground: var(--color-surface);
   }
 
   .drawer-layout {
@@ -616,6 +631,10 @@ const socialLinks = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .logo,
+    .desktop-navigation a,
+    .desktop-social-links a,
+    .menu-icon,
     .desktop-navigation a::after,
     .drawer-panel,
     .mobile-menu::backdrop,
