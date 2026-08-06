@@ -1,11 +1,16 @@
 ---
 import "../styles/globals.css";
 
-import { Image } from "astro:assets";
+import { Font, Image } from "astro:assets";
 
 import heroImage from "../assets/img/0004.png";
 import Layout from "../layouts/Layout.astro";
 ---
+
+<head>
+  <meta charset="utf-8" />
+  <Font cssVariable="--font-kiyosuna-sans" />
+</head>
 
 <Layout headerVariant="top">
   <main>
@@ -19,7 +24,9 @@ import Layout from "../layouts/Layout.astro";
         fetchpriority="high"
       />
     </section>
-    <section id="highlights"></section>
+    <section id="highlights">
+      <h2 class="title">Highlights</h2>
+    </section>
     <section id="about"></section>
   </main>
 </Layout>
@@ -44,5 +51,16 @@ import Layout from "../layouts/Layout.astro";
     height: 100%;
     object-fit: cover;
     object-position: 30% 35%;
+  }
+
+  .title {
+    font-family: var(--font-kiyosuna-sans);
+    color: var(--color-text);
+  }
+
+  #highlights {
+    width: var(--container);
+    height: 20vh;
+    margin-inline: auto;
   }
 </style>
