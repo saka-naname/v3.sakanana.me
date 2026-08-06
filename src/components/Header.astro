@@ -46,22 +46,38 @@ const socialLinks = [
 <header class="header site-header" data-scroll-border>
   <div class="container">
     <a class="logo" href="/">sakanana.me</a>
-    <nav class="desktop-menu" aria-label="メインナビゲーション">
-      <ul class="desktop-navigation">
+    <div class="desktop-menu">
+      <nav aria-label="メインナビゲーション">
+        <ul class="desktop-navigation">
+          {
+            internalNavigation.map(({ label, href }) => (
+              <li>
+                <a
+                  href={href}
+                  aria-current={isCurrentPage(href) ? "page" : undefined}
+                >
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <span class="desktop-separator" aria-hidden="true"></span>
+
+      <ul class="desktop-social-links" aria-label="ソーシャルリンク">
         {
-          internalNavigation.map(({ label, href }) => (
+          socialLinks.map(({ label, href, icon }) => (
             <li>
-              <a
-                href={href}
-                aria-current={isCurrentPage(href) ? "page" : undefined}
-              >
-                {label}
+              <a href={href} aria-label={label}>
+                <Icon name={icon} aria-hidden="true" />
               </a>
             </li>
           ))
         }
       </ul>
-    </nav>
+    </div>
     <button
       class="menu-button"
       type="button"
@@ -283,6 +299,9 @@ const socialLinks = [
   }
 
   .desktop-menu {
+    display: flex;
+    gap: 24px;
+    align-items: center;
     padding: 0;
     margin-left: auto;
   }
@@ -321,6 +340,45 @@ const socialLinks = [
 
       &:is(:hover, :focus-visible, [aria-current="page"])::after {
         transform: scaleX(1);
+      }
+    }
+  }
+
+  .desktop-separator {
+    width: 1px;
+    height: 24px;
+    margin-left: 6px;
+    background-color: color-mix(
+      in srgb,
+      var(--color-empress-dark-1) 20%,
+      transparent
+    );
+  }
+
+  .desktop-social-links {
+    display: flex;
+    gap: 4px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    a {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      font-size: 1.25rem;
+      color: var(--color-empress-dark-2);
+      text-decoration: none;
+      border-radius: 999px;
+
+      &:is(:hover, :focus-visible) {
+        color: var(--color-text);
+        background-color: color-mix(
+          in srgb,
+          var(--color-empress-light-1) 14%,
+          transparent
+        );
       }
     }
   }
