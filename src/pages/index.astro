@@ -25,7 +25,10 @@ import Layout from "../layouts/Layout.astro";
       />
     </section>
     <section id="highlights">
-      <h2 class="title">Highlights</h2>
+      <div class="container">
+        <h2 class="title">Highlights</h2>
+        <div class="coming-soon"><span>Coming soon...</span></div>
+      </div>
     </section>
     <section id="about"></section>
   </main>
@@ -35,6 +38,32 @@ import Layout from "../layouts/Layout.astro";
   main {
     width: 100%;
     min-height: 100lvh;
+  }
+
+  section {
+    width: 100%;
+    padding-block: 1rem;
+
+    .container {
+      width: var(--container);
+      margin-inline: auto;
+    }
+  }
+
+  .coming-soon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 24rem;
+    border: 2px solid var(--color-empress-dark-2);
+    border-style: dashed;
+
+    span {
+      font-family: var(--font-kiyosuna-sans);
+      font-size: 2rem;
+      font-weight: 300;
+    }
   }
 
   #hero {
@@ -55,12 +84,11 @@ import Layout from "../layouts/Layout.astro";
 
   .title {
     font-family: var(--font-kiyosuna-sans);
+    font-size: 2rem;
     color: var(--color-text);
   }
 
   #highlights {
-    width: var(--container);
-    height: 20vh;
     margin-inline: auto;
   }
 </style>
