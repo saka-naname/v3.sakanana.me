@@ -1,7 +1,8 @@
 ---
 import "../styles/globals.css";
 
-import { Font, Image } from "astro:assets";
+import { Font } from "astro:assets";
+import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
 import avatarImage from "../assets/img/avatar.webp";
@@ -32,18 +33,20 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
 </head>
 
 <Layout>
-  <main>
-    <section id="profile">
-      <div class="container">
-        <h1>PROFILE</h1>
-        <div class="profile">
-          <Image
-            src={avatarImage}
-            alt="アイコン"
-            layout="full-width"
-            class="icon"
-            loading="eager"
-          />
+  <main class="container">
+    <h1>PROFILE</h1>
+    <div class="layout">
+      <div class="avatar">
+        <Image
+          src={avatarImage}
+          alt="アイコン"
+          layout="full-width"
+          class="icon"
+          loading="eager"
+        />
+      </div>
+      <div class="contents">
+        <section id="profile">
           <div class="content">
             <h2 class="name">さか<span class="handle">saka-naname</span></h2>
             <p>学生ソフトウェアエンジニア。</p>
@@ -61,29 +64,25 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
               }
             </ul>
           </div>
-        </div>
+        </section>
+        <section id="tools">
+          <h2>作業環境・ツール</h2>
+          <ul>
+            <li>MacBook Air (M5)</li>
+            <li>CLIP STUDIO PAINT</li>
+            <li>Adobe Photoshop</li>
+            <li>Studio One 6 Artist</li>
+            <li>Bitwig Studio</li>
+          </ul>
+        </section>
+        <section id="certifications">
+          <h2>資格等</h2>
+          <ul>
+            <li>基本情報技術者 (2019年11月)</li>
+          </ul>
+        </section>
       </div>
-    </section>
-    <section id="tools">
-      <div class="container">
-        <h2>作業環境・ツール</h2>
-        <ul>
-          <li>MacBook Air (M5)</li>
-          <li>CLIP STUDIO PAINT</li>
-          <li>Adobe Photoshop</li>
-          <li>Studio One 6 Artist</li>
-          <li>Bitwig Studio</li>
-        </ul>
-      </div>
-    </section>
-    <section id="certifications">
-      <div class="container">
-        <h2>資格等</h2>
-        <ul>
-          <li>基本情報技術者 (2019年11月)</li>
-        </ul>
-      </div>
-    </section>
+    </div>
   </main>
 </Layout>
 
@@ -96,11 +95,11 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
   section {
     width: 100%;
     padding-block: 16px;
+  }
 
-    .container {
-      width: var(--container);
-      margin-inline: auto;
-    }
+  .container {
+    width: var(--container);
+    margin-inline: auto;
   }
 
   h1 {
@@ -113,22 +112,26 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
     border-bottom: 2px solid var(--color-empress-dark-2);
   }
 
-  .profile {
+  .layout {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+  }
 
-    .icon {
+  .avatar {
+    text-align: center;
+
+    img {
       width: 240px;
       max-width: 80%;
       height: auto;
       aspect-ratio: 1;
-      margin-inline: auto;
       overflow: hidden;
       border: 2px solid var(--color-border);
       border-radius: 10%;
     }
+  }
 
+  #profile {
     .content {
       color: var(--color-empress-dark-2);
 
@@ -177,6 +180,34 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
 
     ul {
       list-style: circle inside;
+    }
+  }
+
+  @media (width >= 768px) {
+    .layout {
+      flex-direction: row;
+      gap: 48px;
+      width: fit-content;
+      margin-inline: auto;
+    }
+
+    .avatar {
+      text-align: start;
+
+      img {
+        width: 240px;
+        max-width: none;
+      }
+    }
+  }
+
+  @media (width >= 1024px) {
+    .avatar img {
+      width: 360px;
+    }
+
+    .contents {
+      width: 540px;
     }
   }
 </style>
