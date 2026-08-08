@@ -47,7 +47,7 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
           <div class="content">
             <h2 class="name">さか<span class="handle">saka-naname</span></h2>
             <p>学生ソフトウェアエンジニア。</p>
-            <p>趣味としてイラストや楽曲の制作も行っています。</p>
+            <p>趣味としてお絵描きやDTM等の創作活動も嗜んでいます。</p>
 
             <ul class="social-links">
               {
@@ -96,7 +96,8 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
   }
 
   h1 {
-    margin-bottom: 16px;
+    padding-bottom: 4px;
+    margin-bottom: 24px;
     font-family: var(--font-kiyosuna-sans);
     font-size: 2rem;
     font-weight: 700;
@@ -110,6 +111,7 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
     gap: 16px;
 
     .icon {
+      width: 240px;
       max-width: 80%;
       height: auto;
       aspect-ratio: 1;
@@ -123,6 +125,7 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
       color: var(--color-empress-dark-2);
 
       .name {
+        margin-bottom: 8px;
         font-family: var(--font-kiyosuna-sans);
         font-size: 2rem;
         font-weight: 700;
@@ -157,6 +160,7 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
   #tools,
   #tech-stacks {
     h2 {
+      margin-bottom: 8px;
       font-family: var(--font-kiyosuna-sans);
       font-size: 1.5rem;
       font-weight: 700;
