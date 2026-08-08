@@ -722,6 +722,12 @@ const socialLinks = [
 </script>
 
 <style is:global>
+  @media (width < 768px) {
+    html {
+      scrollbar-gutter: stable;
+    }
+  }
+
   html[data-menu-open] {
     overflow: hidden;
   }
