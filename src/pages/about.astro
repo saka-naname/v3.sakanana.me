@@ -64,8 +64,18 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
         </div>
       </div>
     </section>
-    <section id="tools"></section>
-    <section id="tech-stacks"></section>
+    <section id="tools">
+      <div class="container">
+        <h2>作業環境・ツール</h2>
+        <ul>
+          <li>MacBook Air (M5)</li>
+          <li>CLIP STUDIO PAINT</li>
+          <li>Adobe Photoshop</li>
+          <li>Studio One 6 Artist</li>
+          <li>Bitwig Studio</li>
+        </ul>
+      </div>
+    </section>
   </main>
 </Layout>
 
@@ -141,6 +151,22 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
           }
         }
       }
+    }
+  }
+
+  #tools,
+  #tech-stacks {
+    h2 {
+      font-family: var(--font-kiyosuna-sans);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-empress-dark-2);
+    }
+  }
+
+  #tools {
+    ul {
+      list-style: circle inside;
     }
   }
 </style>
