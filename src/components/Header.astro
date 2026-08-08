@@ -245,23 +245,11 @@ const socialLinks = [
     font-weight: 700;
     color: var(--header-foreground, var(--color-empress-dark-2));
     text-decoration: none;
-    transition: color 0.2s ease-out;
+    opacity: 1;
+    transition: opacity 0.15s ease-out;
 
-    &::after {
-      position: absolute;
-      right: 0;
-      bottom: -0.2em;
-      left: 0;
-      height: 1px;
-      content: "";
-      background-color: currentcolor;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    &:is(:hover, :focus-visible)::after {
-      transform: scaleX(1);
+    &:is(:hover, :focus-visible) {
+      opacity: 0.6;
     }
   }
 
