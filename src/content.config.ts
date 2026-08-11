@@ -67,7 +67,13 @@ const note = defineCollection({
       title: z.string().min(1),
       summary: z.string().min(1),
 
-      category: z.enum([""]),
+      category: z.enum([
+        "engineering",
+        "making",
+        "diary",
+        "memorandum",
+        "tips",
+      ]),
       cover: z
         .object({
           image: image(),
