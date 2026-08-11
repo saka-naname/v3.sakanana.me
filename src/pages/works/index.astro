@@ -70,82 +70,99 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
           </div>
 
           <div
-            class="featured-list"
+            class="featured-carousel"
             data-featured-carousel
             role="group"
+            aria-roledescription="カルーセル"
             aria-label="注目作品"
             tabindex="0"
           >
-            {featuredWorks.map(({ data }, index) => {
-              const url = primaryUrl(data.links);
-              return (
-                <article class="featured-item" data-featured-slide>
-                  {url ? (
-                    <a class="featured-card" href={url}>
-                      <figure class="featured-image">
-                        <Image
-                          src={data.cover.image}
-                          alt={data.cover.alt}
-                          widths={[480, 720, 960]}
-                          sizes={
-                            index === 0
-                              ? "(min-width: 768px) 58vw, 88vw"
-                              : "(min-width: 768px) 24vw, 88vw"
-                          }
-                          loading={index === 0 ? "eager" : "lazy"}
-                        />
-                      </figure>
-                      <div class="featured-copy">
-                        <div class="work-meta">
-                          <span>{kindLabels[data.kind]}</span>
-                          <time datetime={data.publishedAt.toISOString()}>
-                            {formatDate(data.publishedAt)}
-                          </time>
+            <div class="featured-list">
+              {featuredWorks.map(({ data }, index) => {
+                const url = primaryUrl(data.links);
+                return (
+                  <article
+                    class="featured-item"
+                    data-featured-slide
+                    aria-label={`${index + 1} / ${featuredWorks.length}`}
+                  >
+                    {url ? (
+                      <a class="featured-card" href={url}>
+                        <figure class="featured-image">
+                          <Image
+                            src={data.cover.image}
+                            alt={data.cover.alt}
+                            widths={[480, 720, 960]}
+                            sizes={
+                              index === 0
+                                ? "(min-width: 768px) 58vw, 88vw"
+                                : "(min-width: 768px) 24vw, 88vw"
+                            }
+                            loading={index === 0 ? "eager" : "lazy"}
+                          />
+                        </figure>
+                        <div class="featured-copy">
+                          <div class="work-meta">
+                            <span>{kindLabels[data.kind]}</span>
+                            <time datetime={data.publishedAt.toISOString()}>
+                              {formatDate(data.publishedAt)}
+                            </time>
+                          </div>
+                          <h3>{data.title}</h3>
+                          <p>{data.summary}</p>
                         </div>
-                        <h3>{data.title}</h3>
-                        <p>{data.summary}</p>
-                      </div>
-                    </a>
-                  ) : (
-                    <div class="featured-card">
-                      <figure class="featured-image">
-                        <Image
-                          src={data.cover.image}
-                          alt={data.cover.alt}
-                          widths={[480, 720, 960]}
-                          sizes={
-                            index === 0
-                              ? "(min-width: 768px) 58vw, 88vw"
-                              : "(min-width: 768px) 24vw, 88vw"
-                          }
-                          loading={index === 0 ? "eager" : "lazy"}
-                        />
-                      </figure>
-                      <div class="featured-copy">
-                        <div class="work-meta">
-                          <span>{kindLabels[data.kind]}</span>
-                          <time datetime={data.publishedAt.toISOString()}>
-                            {formatDate(data.publishedAt)}
-                          </time>
+                      </a>
+                    ) : (
+                      <div class="featured-card">
+                        <figure class="featured-image">
+                          <Image
+                            src={data.cover.image}
+                            alt={data.cover.alt}
+                            widths={[480, 720, 960]}
+                            sizes={
+                              index === 0
+                                ? "(min-width: 768px) 58vw, 88vw"
+                                : "(min-width: 768px) 24vw, 88vw"
+                            }
+                            loading={index === 0 ? "eager" : "lazy"}
+                          />
+                        </figure>
+                        <div class="featured-copy">
+                          <div class="work-meta">
+                            <span>{kindLabels[data.kind]}</span>
+                            <time datetime={data.publishedAt.toISOString()}>
+                              {formatDate(data.publishedAt)}
+                            </time>
+                          </div>
+                          <h3>{data.title}</h3>
+                          <p>{data.summary}</p>
                         </div>
-                        <h3>{data.title}</h3>
-                        <p>{data.summary}</p>
                       </div>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
+                    )}
+                  </article>
+                );
+              })}
+            </div>
           </div>
 
           <div class="carousel-controls" data-carousel-controls>
-            <p aria-live="polite">
+            <p aria-live="off">
               <span data-carousel-current>01</span>
               <span aria-hidden="true"> / </span>
               <span class="visually-hidden">全</span>
               <span>{String(featuredWorks.length).padStart(2, "0")}</span>
             </p>
             <div>
+              <button
+                class="carousel-button"
+                type="button"
+                data-carousel-toggle
+                aria-label="自動再生を停止"
+              >
+                <span data-carousel-toggle-icon aria-hidden="true">
+                  Ⅱ
+                </span>
+              </button>
               <button
                 class="carousel-button"
                 type="button"
@@ -270,6 +287,9 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
 </Layout>
 
 <script>
+  import EmblaCarousel from "embla-carousel";
+  import Autoplay from "embla-carousel-autoplay";
+
   const filterButtons = Array.from(
     document.querySelectorAll<HTMLButtonElement>("[data-filter]"),
   );
@@ -308,11 +328,6 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
   const carousel = document.querySelector<HTMLElement>(
     "[data-featured-carousel]",
   );
-  const slides = carousel
-    ? Array.from(
-        carousel.querySelectorAll<HTMLElement>("[data-featured-slide]"),
-      )
-    : [];
   const currentNumber = document.querySelector<HTMLElement>(
     "[data-carousel-current]",
   );
@@ -322,48 +337,87 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
   const nextButton = document.querySelector<HTMLButtonElement>(
     "[data-carousel-next]",
   );
-  let activeSlide = 0;
-  let scrollFrame = 0;
-
-  const updateCarousel = () => {
-    if (!carousel || slides.length === 0) return;
-
-    activeSlide = slides.reduce((closestIndex, slide, index) => {
-      const closestDistance = Math.abs(
-        slides[closestIndex].offsetLeft - carousel.scrollLeft,
-      );
-      const distance = Math.abs(slide.offsetLeft - carousel.scrollLeft);
-      return distance < closestDistance ? index : closestIndex;
-    }, 0);
-
-    if (currentNumber) {
-      currentNumber.textContent = String(activeSlide + 1).padStart(2, "0");
-    }
-    if (previousButton) previousButton.disabled = activeSlide === 0;
-    if (nextButton) nextButton.disabled = activeSlide === slides.length - 1;
-  };
-
-  const goToSlide = (index: number) => {
-    const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
-    slides[nextIndex]?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "start",
-    });
-  };
-
-  carousel?.addEventListener(
-    "scroll",
-    () => {
-      cancelAnimationFrame(scrollFrame);
-      scrollFrame = requestAnimationFrame(updateCarousel);
-    },
-    { passive: true },
+  const autoplayButton = document.querySelector<HTMLButtonElement>(
+    "[data-carousel-toggle]",
   );
-  previousButton?.addEventListener("click", () => goToSlide(activeSlide - 1));
-  nextButton?.addEventListener("click", () => goToSlide(activeSlide + 1));
-  window.addEventListener("resize", updateCarousel);
-  updateCarousel();
+  const autoplayIcon = document.querySelector<HTMLElement>(
+    "[data-carousel-toggle-icon]",
+  );
+
+  if (carousel) {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const autoplay = Autoplay({
+      delay: 5000,
+      playOnInit: !prefersReducedMotion,
+      stopOnFocusIn: true,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+      breakpoints: {
+        "(min-width: 768px)": { active: false },
+      },
+    });
+    const embla = EmblaCarousel(
+      carousel,
+      {
+        align: "start",
+        loop: true,
+        duration: 28,
+        breakpoints: {
+          "(min-width: 768px)": { active: false },
+          "(prefers-reduced-motion: reduce)": { duration: 0 },
+        },
+      },
+      [autoplay],
+    );
+
+    carousel.dataset.carouselReady = "true";
+
+    const updateCarousel = () => {
+      if (currentNumber) {
+        currentNumber.textContent = String(
+          embla.selectedScrollSnap() + 1,
+        ).padStart(2, "0");
+      }
+      if (previousButton) previousButton.disabled = !embla.canScrollPrev();
+      if (nextButton) nextButton.disabled = !embla.canScrollNext();
+    };
+
+    const updateAutoplayButton = () => {
+      const isPlaying = autoplay.isPlaying();
+      if (autoplayButton) {
+        autoplayButton.setAttribute(
+          "aria-label",
+          isPlaying ? "自動再生を停止" : "自動再生を開始",
+        );
+      }
+      if (autoplayIcon) autoplayIcon.textContent = isPlaying ? "Ⅱ" : "▶";
+    };
+
+    previousButton?.addEventListener("click", () => {
+      embla.scrollPrev();
+      autoplay.reset();
+    });
+    nextButton?.addEventListener("click", () => {
+      embla.scrollNext();
+      autoplay.reset();
+    });
+    autoplayButton?.addEventListener("click", () => {
+      if (autoplay.isPlaying()) autoplay.stop();
+      else autoplay.play();
+      updateAutoplayButton();
+    });
+
+    embla
+      .on("select", updateCarousel)
+      .on("reInit", updateCarousel)
+      .on("autoplay:play", updateAutoplayButton)
+      .on("autoplay:stop", updateAutoplayButton);
+
+    updateCarousel();
+    updateAutoplayButton();
+  }
 </script>
 
 <style>
@@ -447,10 +501,7 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
     letter-spacing: 0.12em;
   }
 
-  .featured-list {
-    display: flex;
-    gap: 16px;
-    padding-bottom: 8px;
+  .featured-carousel {
     overflow-x: auto;
     scroll-behavior: smooth;
     overscroll-behavior-inline: contain;
@@ -460,6 +511,19 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+
+  .featured-carousel[data-carousel-ready="true"] {
+    overflow: hidden;
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+
+  .featured-list {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 8px;
+    touch-action: pan-y pinch-zoom;
   }
 
   .featured-item {
@@ -727,14 +791,18 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
   }
 
   @media (width >= 768px) {
+    .featured-carousel,
+    .featured-carousel[data-carousel-ready="true"] {
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+
     .featured-list {
       display: grid;
       grid-template-rows: repeat(2, minmax(0, 1fr));
       grid-template-columns: minmax(0, 1.45fr) minmax(270px, 0.75fr);
       gap: 28px 40px;
       padding: 0 0 48px;
-      overflow: visible;
-      scroll-snap-type: none;
       border-bottom: 1px solid var(--color-dessert-dark-2);
     }
 
@@ -791,7 +859,7 @@ const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .featured-list {
+    .featured-carousel {
       scroll-behavior: auto;
     }
 
