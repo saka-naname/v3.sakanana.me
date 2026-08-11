@@ -16,6 +16,15 @@ const work = defineCollection({
         alt: z.string().min(1),
       }),
 
+      collaboration: z.discriminatedUnion("type", [
+        z.object({
+          type: z.literal("personal"),
+        }),
+        z.object({
+          type: z.literal("organization"),
+          organization: z.string().min(1),
+        }),
+      ]),
       links: z.array(
         z.object({
           type: z.enum(["source", "website", "download", "article", "other"]),
@@ -31,19 +40,21 @@ const work = defineCollection({
     return z.discriminatedUnion("kind", [
       base.extend({
         kind: z.literal("software"),
-        details: z.object({}),
+        details: z.object({
+          platforms: z.array(
+            z.enum(["web-frontend", "web-backend", "desktop", "cli", "other"]),
+          ),
+          stacks: z.array(z.string().min(1)),
+        }),
       }),
       base.extend({
         kind: z.literal("illustration"),
-        details: z.object({}),
       }),
       base.extend({
         kind: z.literal("music"),
-        details: z.object({}),
       }),
       base.extend({
         kind: z.literal("other"),
-        details: z.object({}),
       }),
     ]);
   },
