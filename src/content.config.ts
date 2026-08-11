@@ -1,5 +1,5 @@
 import { defineCollection } from "astro/content/config";
-import { glob } from "astro/loaders";
+import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { reference } from "astro:content";
 
@@ -84,4 +84,12 @@ const note = defineCollection({
     }),
 });
 
-export const collections = { work, note };
+const homeCuration = defineCollection({
+  loader: file("./src/content/home-curation.yaml"),
+  schema: z.object({
+    highlights: z.array(reference("work")),
+    selectedNotes: z.array(reference("note")),
+  }),
+});
+
+export const collections = { work, note, homeCuration };
