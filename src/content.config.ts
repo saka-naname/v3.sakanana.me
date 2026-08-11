@@ -1,6 +1,7 @@
 import { defineCollection } from "astro/content/config";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { reference } from "astro:content";
 
 const work = defineCollection({
   loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/works" }),
@@ -23,7 +24,7 @@ const work = defineCollection({
         }),
       ),
       tags: z.array(z.string()),
-      pubDate: z.date(),
+      publishedAt: z.date(),
       draft: z.boolean().optional(),
     });
 
@@ -48,4 +49,28 @@ const work = defineCollection({
   },
 });
 
-export const collections = { work };
+const note = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/notes" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().min(1),
+      summary: z.string().min(1),
+
+      category: z.enum([""]),
+      cover: z
+        .object({
+          image: image(),
+          alt: z.string().min(1),
+        })
+        .optional(),
+
+      tags: z.array(z.string()),
+      publishedAt: z.date(),
+      updatedAt: z.date().optional(),
+      draft: z.boolean().optional(),
+
+      relatedWorks: z.array(reference("work")),
+    }),
+});
+
+export const collections = { work, note };
