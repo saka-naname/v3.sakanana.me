@@ -1,0 +1,803 @@
+---
+import "../../styles/globals.css";
+
+import { Font, Image } from "astro:assets";
+import { getCollection } from "astro:content";
+
+import Layout from "../../layouts/Layout.astro";
+
+const kindLabels = {
+  software: "Software",
+  illustration: "Illustration",
+  music: "Music",
+  other: "Other",
+} as const;
+
+const kindOrder = ["software", "illustration", "music", "other"] as const;
+
+const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+);
+const workById = new Map(works.map((work) => [work.id, work]));
+const [worksCuration] = await getCollection("worksCuration");
+const featuredWorks = (worksCuration?.data.featured ?? [])
+  .flatMap(({ id }) => {
+    const work = workById.get(id);
+    return work ? [work] : [];
+  })
+  .slice(0, 3);
+const availableKinds = kindOrder.filter((kind) =>
+  works.some(({ data }) => data.kind === kind),
+);
+
+const dateFormatter = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "2-digit",
+});
+
+const formatDate = (date: Date) => dateFormatter.format(date).replace("/", ".");
+const primaryUrl = (links: (typeof works)[number]["data"]["links"]) =>
+  links.find(({ type }) => type === "website")?.url ?? links[0]?.url;
+---
+
+<head>
+  <meta charset="utf-8" />
+  <Font cssVariable="--font-kiyosuna-sans" />
+  <Font cssVariable="--font-suse-mono" />
+</head>
+
+<Layout
+  title="Works | sakanana.me"
+  description="ソフトウェア、イラスト、音楽など、sakanana.me の制作物一覧です。"
+>
+  <main class="works-page">
+    <header class="page-heading">
+      <p class="eyebrow">Projects &amp; creative practice</p>
+      <div class="heading-row">
+        <h1>Works</h1>
+        <p>
+          ソフトウェア、イラスト、音楽。これまでに作ったものをまとめています。
+        </p>
+      </div>
+    </header>
+
+    {
+      featuredWorks.length > 0 && (
+        <section class="featured" aria-labelledby="featured-title">
+          <div class="section-heading">
+            <h2 id="featured-title">Selected</h2>
+            <span>注目の制作</span>
+          </div>
+
+          <div
+            class="featured-list"
+            data-featured-carousel
+            role="group"
+            aria-label="注目作品"
+            tabindex="0"
+          >
+            {featuredWorks.map(({ data }, index) => {
+              const url = primaryUrl(data.links);
+              return (
+                <article class="featured-item" data-featured-slide>
+                  {url ? (
+                    <a class="featured-card" href={url}>
+                      <figure class="featured-image">
+                        <Image
+                          src={data.cover.image}
+                          alt={data.cover.alt}
+                          widths={[480, 720, 960]}
+                          sizes={
+                            index === 0
+                              ? "(min-width: 768px) 58vw, 88vw"
+                              : "(min-width: 768px) 24vw, 88vw"
+                          }
+                          loading={index === 0 ? "eager" : "lazy"}
+                        />
+                      </figure>
+                      <div class="featured-copy">
+                        <div class="work-meta">
+                          <span>{kindLabels[data.kind]}</span>
+                          <time datetime={data.publishedAt.toISOString()}>
+                            {formatDate(data.publishedAt)}
+                          </time>
+                        </div>
+                        <h3>{data.title}</h3>
+                        <p>{data.summary}</p>
+                      </div>
+                    </a>
+                  ) : (
+                    <div class="featured-card">
+                      <figure class="featured-image">
+                        <Image
+                          src={data.cover.image}
+                          alt={data.cover.alt}
+                          widths={[480, 720, 960]}
+                          sizes={
+                            index === 0
+                              ? "(min-width: 768px) 58vw, 88vw"
+                              : "(min-width: 768px) 24vw, 88vw"
+                          }
+                          loading={index === 0 ? "eager" : "lazy"}
+                        />
+                      </figure>
+                      <div class="featured-copy">
+                        <div class="work-meta">
+                          <span>{kindLabels[data.kind]}</span>
+                          <time datetime={data.publishedAt.toISOString()}>
+                            {formatDate(data.publishedAt)}
+                          </time>
+                        </div>
+                        <h3>{data.title}</h3>
+                        <p>{data.summary}</p>
+                      </div>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+
+          <div class="carousel-controls" data-carousel-controls>
+            <p aria-live="polite">
+              <span data-carousel-current>01</span>
+              <span aria-hidden="true"> / </span>
+              <span class="visually-hidden">全</span>
+              <span>{String(featuredWorks.length).padStart(2, "0")}</span>
+            </p>
+            <div>
+              <button
+                class="carousel-button"
+                type="button"
+                data-carousel-previous
+                aria-label="前の作品を見る"
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <button
+                class="carousel-button"
+                type="button"
+                data-carousel-next
+                aria-label="次の作品を見る"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="archive" aria-labelledby="archive-title">
+      <div class="section-heading archive-heading">
+        <h2 id="archive-title">All works</h2>
+        <p><span data-result-count>{works.length}</span> projects</p>
+      </div>
+
+      <div class="filter-row" role="group" aria-label="作品を種類で絞り込む">
+        <button
+          class="filter-button"
+          type="button"
+          data-filter="all"
+          aria-pressed="true">All</button
+        >
+        {
+          availableKinds.map((kind) => (
+            <button
+              class="filter-button"
+              type="button"
+              data-filter={kind}
+              aria-pressed="false"
+            >
+              {kindLabels[kind]}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="work-grid" data-work-grid>
+        {
+          works.map(({ data }) => {
+            const url = primaryUrl(data.links);
+            return (
+              <article class="work-card" data-work-kind={data.kind}>
+                {url ? (
+                  <a href={url}>
+                    <figure class="work-image">
+                      <Image
+                        src={data.cover.image}
+                        alt={data.cover.alt}
+                        widths={[420, 640, 820]}
+                        sizes="(min-width: 1080px) 28vw, (min-width: 680px) 44vw, 92vw"
+                        loading="lazy"
+                      />
+                    </figure>
+                    <div class="work-copy">
+                      <div class="work-meta">
+                        <span>{kindLabels[data.kind]}</span>
+                        <time datetime={data.publishedAt.toISOString()}>
+                          {formatDate(data.publishedAt)}
+                        </time>
+                      </div>
+                      <h3>{data.title}</h3>
+                      <p>{data.summary}</p>
+                      <ul class="tag-list" aria-label="タグ">
+                        {data.tags.slice(0, 3).map((tag) => (
+                          <li>{tag}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </a>
+                ) : (
+                  <div>
+                    <figure class="work-image">
+                      <Image
+                        src={data.cover.image}
+                        alt={data.cover.alt}
+                        widths={[420, 640, 820]}
+                        sizes="(min-width: 1080px) 28vw, (min-width: 680px) 44vw, 92vw"
+                        loading="lazy"
+                      />
+                    </figure>
+                    <div class="work-copy">
+                      <div class="work-meta">
+                        <span>{kindLabels[data.kind]}</span>
+                        <time datetime={data.publishedAt.toISOString()}>
+                          {formatDate(data.publishedAt)}
+                        </time>
+                      </div>
+                      <h3>{data.title}</h3>
+                      <p>{data.summary}</p>
+                      <ul class="tag-list" aria-label="タグ">
+                        {data.tags.slice(0, 3).map((tag) => (
+                          <li>{tag}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })
+        }
+      </div>
+
+      <p class="empty-state" data-empty-state hidden>
+        このカテゴリーの作品はまだありません。
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  const filterButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-filter]"),
+  );
+  const workCards = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-work-kind]"),
+  );
+  const resultCount = document.querySelector<HTMLElement>(
+    "[data-result-count]",
+  );
+  const emptyState = document.querySelector<HTMLElement>("[data-empty-state]");
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const selectedKind = button.dataset.filter;
+      let visibleCount = 0;
+
+      filterButtons.forEach((item) => {
+        item.setAttribute(
+          "aria-pressed",
+          String(item.dataset.filter === selectedKind),
+        );
+      });
+
+      workCards.forEach((card) => {
+        const isVisible =
+          selectedKind === "all" || card.dataset.workKind === selectedKind;
+        card.hidden = !isVisible;
+        if (isVisible) visibleCount += 1;
+      });
+
+      if (resultCount) resultCount.textContent = String(visibleCount);
+      if (emptyState) emptyState.hidden = visibleCount !== 0;
+    });
+  });
+
+  const carousel = document.querySelector<HTMLElement>(
+    "[data-featured-carousel]",
+  );
+  const slides = carousel
+    ? Array.from(
+        carousel.querySelectorAll<HTMLElement>("[data-featured-slide]"),
+      )
+    : [];
+  const currentNumber = document.querySelector<HTMLElement>(
+    "[data-carousel-current]",
+  );
+  const previousButton = document.querySelector<HTMLButtonElement>(
+    "[data-carousel-previous]",
+  );
+  const nextButton = document.querySelector<HTMLButtonElement>(
+    "[data-carousel-next]",
+  );
+  let activeSlide = 0;
+  let scrollFrame = 0;
+
+  const updateCarousel = () => {
+    if (!carousel || slides.length === 0) return;
+
+    activeSlide = slides.reduce((closestIndex, slide, index) => {
+      const closestDistance = Math.abs(
+        slides[closestIndex].offsetLeft - carousel.scrollLeft,
+      );
+      const distance = Math.abs(slide.offsetLeft - carousel.scrollLeft);
+      return distance < closestDistance ? index : closestIndex;
+    }, 0);
+
+    if (currentNumber) {
+      currentNumber.textContent = String(activeSlide + 1).padStart(2, "0");
+    }
+    if (previousButton) previousButton.disabled = activeSlide === 0;
+    if (nextButton) nextButton.disabled = activeSlide === slides.length - 1;
+  };
+
+  const goToSlide = (index: number) => {
+    const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
+    slides[nextIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start",
+    });
+  };
+
+  carousel?.addEventListener(
+    "scroll",
+    () => {
+      cancelAnimationFrame(scrollFrame);
+      scrollFrame = requestAnimationFrame(updateCarousel);
+    },
+    { passive: true },
+  );
+  previousButton?.addEventListener("click", () => goToSlide(activeSlide - 1));
+  nextButton?.addEventListener("click", () => goToSlide(activeSlide + 1));
+  window.addEventListener("resize", updateCarousel);
+  updateCarousel();
+</script>
+
+<style>
+  .works-page {
+    width: var(--container);
+    min-height: 100lvh;
+    margin-inline: auto;
+    color: var(--color-text);
+  }
+
+  .page-heading {
+    padding-block: 48px 56px;
+  }
+
+  .eyebrow,
+  .section-heading span,
+  .section-heading p,
+  .work-meta,
+  .carousel-controls,
+  .filter-row button,
+  .tag-list {
+    font-family: var(--font-suse-mono);
+  }
+
+  .eyebrow {
+    margin-bottom: 10px;
+    font-size: 0.72rem;
+    color: var(--color-empress-base);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  .heading-row h1,
+  .section-heading h2,
+  .featured-copy h3,
+  .work-copy h3 {
+    font-family: var(--font-kiyosuna-sans);
+  }
+
+  .heading-row h1 {
+    font-size: clamp(3.25rem, 16vw, 5.5rem);
+    font-weight: 300;
+    line-height: 0.95;
+    color: var(--color-empress-dark-2);
+    letter-spacing: -0.035em;
+  }
+
+  .heading-row > p {
+    max-width: 34rem;
+    margin-top: 24px;
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: var(--color-empress-dark-1);
+  }
+
+  .featured,
+  .archive {
+    padding-bottom: 72px;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .section-heading h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--color-empress-dark-2);
+  }
+
+  .section-heading span,
+  .section-heading p {
+    font-size: 0.68rem;
+    color: var(--color-empress-base);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .featured-list {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .featured-item {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .featured-card,
+  .work-card > :is(a, div) {
+    display: block;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .featured-image,
+  .work-image {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-dessert-dark-1);
+    border: 1px solid var(--color-dessert-dark-2);
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  }
+
+  .featured-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .featured-copy,
+  .work-copy {
+    padding-top: 16px;
+  }
+
+  .work-meta {
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.67rem;
+    color: var(--color-empress-base);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .work-meta span {
+    color: var(--color-empress-dark-2);
+  }
+
+  .featured-copy h3,
+  .work-copy h3 {
+    margin-bottom: 8px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-empress-dark-2);
+  }
+
+  .featured-copy h3 {
+    font-size: clamp(1.45rem, 6vw, 2rem);
+  }
+
+  .featured-copy p,
+  .work-copy > p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--color-empress-dark-1);
+  }
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-size: 0.72rem;
+    color: var(--color-empress-dark-1);
+    letter-spacing: 0.08em;
+  }
+
+  .carousel-controls > div {
+    display: flex;
+    border: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .carousel-button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 38px;
+    padding: 0;
+    color: var(--color-empress-dark-2);
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+
+    &:is(:hover, :focus-visible) {
+      color: var(--color-background);
+      background: var(--color-empress-dark-2);
+    }
+
+    &:disabled {
+      color: var(--color-dessert-dark-3);
+      cursor: default;
+      background: transparent;
+    }
+  }
+
+  .carousel-button + .carousel-button {
+    border-left: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .archive-heading {
+    margin-bottom: 0;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 18px;
+    padding-block: 18px 16px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .filter-button {
+    position: relative;
+    flex: none;
+    padding: 0 0 5px;
+    font-size: 0.72rem;
+    color: var(--color-empress-light-1);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+
+    &::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 1px;
+      content: "";
+      background: currentcolor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s ease-out;
+    }
+
+    &:is(:hover, :focus-visible),
+    &[aria-pressed="true"] {
+      color: var(--color-empress-dark-2);
+    }
+
+    &[aria-pressed="true"]::after {
+      transform: scaleX(1);
+    }
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px 24px;
+  }
+
+  .work-card[hidden] {
+    display: none;
+  }
+
+  .work-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .work-copy h3 {
+    font-size: 1.45rem;
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    padding: 12px 0 0;
+    margin: 0;
+    font-size: 0.65rem;
+    color: var(--color-empress-base);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    list-style: none;
+  }
+
+  .tag-list li::before {
+    content: "#";
+  }
+
+  .empty-state {
+    padding: 64px 24px;
+    color: var(--color-empress-dark-1);
+    text-align: center;
+    border-top: 1px solid var(--color-dessert-dark-2);
+    border-bottom: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
+    clip-path: inset(50%);
+  }
+
+  @media (hover: hover) {
+    .featured-card:hover .featured-image img,
+    .work-card a:hover .work-image img {
+      transform: scale(1.018);
+    }
+
+    .featured-card:hover h3,
+    .work-card a:hover h3 {
+      color: var(--color-text);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.16em;
+    }
+  }
+
+  @media (width >= 680px) {
+    .page-heading {
+      padding-block: 72px 80px;
+    }
+
+    .heading-row {
+      display: grid;
+      grid-template-columns: 1fr minmax(18rem, 28rem);
+      gap: 48px;
+      align-items: end;
+    }
+
+    .heading-row > p {
+      margin: 0 0 4px;
+    }
+
+    .work-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-row {
+      gap: 24px;
+    }
+  }
+
+  @media (width >= 768px) {
+    .featured-list {
+      display: grid;
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1.45fr) minmax(270px, 0.75fr);
+      gap: 28px 40px;
+      padding: 0 0 48px;
+      overflow: visible;
+      scroll-snap-type: none;
+      border-bottom: 1px solid var(--color-dessert-dark-2);
+    }
+
+    .featured-item {
+      min-width: 0;
+    }
+
+    .featured-item:first-child {
+      grid-row: 1 / 3;
+    }
+
+    .featured-item:not(:first-child) .featured-card {
+      display: grid;
+      grid-template-columns: minmax(116px, 42%) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .featured-item:first-child .featured-image {
+      aspect-ratio: 16 / 10;
+    }
+
+    .featured-item:not(:first-child) .featured-image {
+      aspect-ratio: 4 / 3;
+    }
+
+    .featured-item:not(:first-child) .featured-copy {
+      padding-top: 0;
+    }
+
+    .featured-item:first-child .featured-copy h3 {
+      font-size: clamp(2rem, 3.2vw, 2.75rem);
+    }
+
+    .featured-item:not(:first-child) .featured-copy h3 {
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+    }
+
+    .carousel-controls {
+      display: none;
+    }
+
+    .featured,
+    .archive {
+      padding-bottom: 96px;
+    }
+  }
+
+  @media (width >= 1080px) {
+    .work-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 56px 32px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .featured-list {
+      scroll-behavior: auto;
+    }
+
+    .featured-image img,
+    .work-image img {
+      transition: none;
+    }
+  }
+</style>

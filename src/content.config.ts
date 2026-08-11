@@ -98,4 +98,11 @@ const homeCuration = defineCollection({
   }),
 });
 
-export const collections = { work, note, homeCuration };
+const worksCuration = defineCollection({
+  loader: file("./src/content/works-curation.yaml"),
+  schema: z.object({
+    featured: z.array(reference("work")),
+  }),
+});
+
+export const collections = { work, note, homeCuration, worksCuration };
