@@ -7,6 +7,13 @@ const work = defineCollection({
   loader: glob({
     pattern: "**/[^_]*.{md,mdx}",
     base: "./src/content/works",
+    generateId: ({ data, entry }) => {
+      if (typeof data.slug !== "string") {
+        throw new Error(`Work entry ${entry} requires a slug`);
+      }
+
+      return data.slug;
+    },
   }),
   schema: ({ image }) => {
     const base = z.object({
