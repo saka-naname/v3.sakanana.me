@@ -49,61 +49,36 @@ const availableKinds = kindOrder.filter((kind) =>
             <h2 id="featured-title">FEATURED</h2>
           </div>
 
-          <div
-            class="featured-carousel"
-            data-featured-carousel
-            role="group"
-            aria-roledescription="カルーセル"
-            aria-label="注目作品"
-            tabindex="0"
-          >
-            <div class="featured-list">
-              {featuredWorks.map((work, index) => (
-                <FeaturedWorkCard
-                  work={work}
-                  variant={index === 0 ? "card" : "list"}
-                  slideIndex={index}
-                  slideCount={featuredWorks.length}
-                />
-              ))}
+          <div class="featured-carousel-frame">
+            <div
+              class="featured-carousel"
+              data-featured-carousel
+              role="group"
+              aria-roledescription="カルーセル"
+              aria-label="注目作品"
+              tabindex="0"
+            >
+              <div class="featured-list">
+                {featuredWorks.map((work, index) => (
+                  <FeaturedWorkCard
+                    work={work}
+                    variant={index === 0 ? "card" : "list"}
+                    slideIndex={index}
+                    slideCount={featuredWorks.length}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
-          <div class="carousel-controls" data-carousel-controls>
-            <p aria-live="off">
-              <span data-carousel-current>01</span>
-              <span aria-hidden="true"> / </span>
-              <span class="visually-hidden">全</span>
-              <span>{String(featuredWorks.length).padStart(2, "0")}</span>
-            </p>
-            <div>
-              <button
-                class="carousel-button"
-                type="button"
-                data-carousel-toggle
-                aria-label="自動再生を停止"
-              >
-                <span data-carousel-toggle-icon aria-hidden="true">
-                  Ⅱ
-                </span>
-              </button>
-              <button
-                class="carousel-button"
-                type="button"
-                data-carousel-previous
-                aria-label="前の作品を見る"
-              >
-                <span aria-hidden="true">←</span>
-              </button>
-              <button
-                class="carousel-button"
-                type="button"
-                data-carousel-next
-                aria-label="次の作品を見る"
-              >
-                <span aria-hidden="true">→</span>
-              </button>
-            </div>
+          <div class="carousel-indicators" aria-hidden="true">
+            {featuredWorks.map((_, index) => (
+              <span
+                class="carousel-indicator"
+                data-carousel-indicator
+                data-active={index === 0 ? "true" : undefined}
+              />
+            ))}
           </div>
         </section>
       )
@@ -188,22 +163,9 @@ const availableKinds = kindOrder.filter((kind) =>
   const carousel = document.querySelector<HTMLElement>(
     "[data-featured-carousel]",
   );
-  const currentNumber = document.querySelector<HTMLElement>(
-    "[data-carousel-current]",
+  const indicators = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-carousel-indicator]"),
   );
-  const previousButton = document.querySelector<HTMLButtonElement>(
-    "[data-carousel-previous]",
-  );
-  const nextButton = document.querySelector<HTMLButtonElement>(
-    "[data-carousel-next]",
-  );
-  const autoplayButton = document.querySelector<HTMLButtonElement>(
-    "[data-carousel-toggle]",
-  );
-  const autoplayIcon = document.querySelector<HTMLElement>(
-    "[data-carousel-toggle-icon]",
-  );
-
   if (carousel) {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -235,48 +197,14 @@ const availableKinds = kindOrder.filter((kind) =>
     carousel.dataset.carouselReady = "true";
 
     const updateCarousel = () => {
-      if (currentNumber) {
-        currentNumber.textContent = String(
-          embla.selectedScrollSnap() + 1,
-        ).padStart(2, "0");
-      }
-      if (previousButton) previousButton.disabled = !embla.canScrollPrev();
-      if (nextButton) nextButton.disabled = !embla.canScrollNext();
+      const selectedIndex = embla.selectedScrollSnap();
+      indicators.forEach((indicator, index) => {
+        indicator.toggleAttribute("data-active", index === selectedIndex);
+      });
     };
-
-    const updateAutoplayButton = () => {
-      const isPlaying = autoplay.isPlaying();
-      if (autoplayButton) {
-        autoplayButton.setAttribute(
-          "aria-label",
-          isPlaying ? "自動再生を停止" : "自動再生を開始",
-        );
-      }
-      if (autoplayIcon) autoplayIcon.textContent = isPlaying ? "Ⅱ" : "▶";
-    };
-
-    previousButton?.addEventListener("click", () => {
-      embla.scrollPrev();
-      autoplay.reset();
-    });
-    nextButton?.addEventListener("click", () => {
-      embla.scrollNext();
-      autoplay.reset();
-    });
-    autoplayButton?.addEventListener("click", () => {
-      if (autoplay.isPlaying()) autoplay.stop();
-      else autoplay.play();
-      updateAutoplayButton();
-    });
-
-    embla
-      .on("select", updateCarousel)
-      .on("reInit", updateCarousel)
-      .on("autoplay:play", updateAutoplayButton)
-      .on("autoplay:stop", updateAutoplayButton);
+    embla.on("select", updateCarousel).on("reInit", updateCarousel);
 
     updateCarousel();
-    updateAutoplayButton();
   }
 </script>
 
@@ -289,7 +217,6 @@ const availableKinds = kindOrder.filter((kind) =>
   }
 
   .section-heading p,
-  .carousel-controls,
   .filter-row button {
     font-family: var(--font-suse-mono);
   }
@@ -348,6 +275,10 @@ const availableKinds = kindOrder.filter((kind) =>
     }
   }
 
+  .featured-carousel-frame {
+    position: relative;
+  }
+
   .featured-carousel[data-carousel-ready="true"] {
     overflow: hidden;
     scroll-behavior: auto;
@@ -360,46 +291,27 @@ const availableKinds = kindOrder.filter((kind) =>
     touch-action: pan-y pinch-zoom;
   }
 
-  .carousel-controls {
+  .carousel-indicators {
     display: flex;
+    gap: 8px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 16px;
-    font-size: 0.72rem;
-    color: var(--color-empress-dark-1);
-    letter-spacing: 0.08em;
   }
 
-  .carousel-controls > div {
-    display: flex;
-    border: 1px solid var(--color-dessert-dark-2);
-  }
+  .carousel-indicator {
+    width: 7px;
+    height: 7px;
+    background: var(--color-dessert-dark-3);
+    border-radius: 50%;
+    transition:
+      background-color 0.2s ease-out,
+      transform 0.2s ease-out;
 
-  .carousel-button {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 38px;
-    padding: 0;
-    color: var(--color-empress-dark-2);
-    cursor: pointer;
-    background: transparent;
-    border: 0;
-
-    &:is(:hover, :focus-visible) {
-      color: var(--color-background);
+    &[data-active] {
       background: var(--color-empress-dark-2);
+      transform: scale(1.25);
     }
-
-    &:disabled {
-      color: var(--color-dessert-dark-3);
-      cursor: default;
-      background: transparent;
-    }
-  }
-
-  .carousel-button + .carousel-button {
-    border-left: 1px solid var(--color-dessert-dark-2);
   }
 
   .archive-heading {
@@ -509,7 +421,7 @@ const availableKinds = kindOrder.filter((kind) =>
       gap: 28px 40px;
     }
 
-    .carousel-controls {
+    .carousel-indicators {
       display: none;
     }
 
