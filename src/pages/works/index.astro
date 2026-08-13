@@ -117,7 +117,11 @@ const availableKinds = kindOrder.filter((kind) =>
       </div>
 
       <div class="work-grid" data-work-grid>
-        {works.map((work) => <WorkCard work={work} />)}
+        {
+          works.map((work, index) => (
+            <WorkCard work={work} loading={index < 3 ? "eager" : "lazy"} />
+          ))
+        }
       </div>
 
       <p class="empty-state" data-empty-state hidden>

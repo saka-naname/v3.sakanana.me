@@ -5,9 +5,10 @@ import { formatPublishedDate, kindLabels, type WorkEntry } from "./work-card";
 
 interface Props {
   work: WorkEntry;
+  loading?: "eager" | "lazy";
 }
 
-const { work } = Astro.props;
+const { work, loading = "lazy" } = Astro.props;
 const { data } = work;
 const url = `/works/${work.id}/`;
 const Heading = "h3";
@@ -21,7 +22,7 @@ const Heading = "h3";
         alt={data.cover.alt}
         widths={[420, 640, 820]}
         sizes="(min-width: 1080px) 28vw, (min-width: 680px) 44vw, 92vw"
-        loading="lazy"
+        loading={loading}
       />
     </figure>
     <div class="work-copy">
