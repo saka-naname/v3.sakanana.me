@@ -39,7 +39,7 @@ const work = defineCollection({
 
     return z.discriminatedUnion("kind", [
       base.extend({
-        kind: z.literal("software"),
+        kind: z.literal("development"),
         details: z.object({
           platforms: z.array(
             z.enum(["web-frontend", "web-backend", "desktop", "cli", "other"]),

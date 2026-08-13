@@ -9,7 +9,7 @@ import { kindLabels } from "../../components/works/work-card";
 import WorkCard from "../../components/works/WorkCard.astro";
 import Layout from "../../layouts/Layout.astro";
 
-const kindOrder = ["software", "illustration", "music", "other"] as const;
+const kindOrder = ["development", "illustration", "music", "other"] as const;
 
 const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),

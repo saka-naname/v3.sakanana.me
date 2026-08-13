@@ -3,7 +3,7 @@ import type { CollectionEntry } from "astro:content";
 export type WorkEntry = CollectionEntry<"work">;
 
 export const kindLabels: Record<WorkEntry["data"]["kind"], string> = {
-  software: "Software",
+  development: "Development",
   illustration: "Illustration",
   music: "Music",
   other: "Other",
