@@ -18,7 +18,6 @@ interface Props {
 const { work, variant, slideIndex, slideCount } = Astro.props;
 const { data } = work;
 const url = getPrimaryUrl(data.links) ?? "#";
-const Heading = "h3";
 ---
 
 <article
@@ -45,7 +44,7 @@ const Heading = "h3";
           {formatPublishedDate(data.publishedAt)}
         </time>
       </div>
-      <Heading>{data.title}</Heading>
+      <h3>{data.title}</h3>
       <p>{data.summary}</p>
       <ul class="tag-list" aria-label="タグ">
         {data.tags.slice(0, 3).map((tag) => <li>{tag}</li>)}

@@ -13,6 +13,13 @@
   "extends": [
     "markuplint:recommended"
   ],
+  "overrides": {
+    "src/components/**/*.astro": {
+      "rules": {
+        "heading-levels": false
+      }
+    }
+  },
   "nodeRules": [
     {
       "selector": "head:has(> Font)",
