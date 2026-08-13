@@ -16,6 +16,3 @@ const dateFormatter = new Intl.DateTimeFormat("ja-JP", {
 
 export const formatPublishedDate = (date: Date) =>
   dateFormatter.format(date).replace("/", ".");
-
-export const getPrimaryUrl = (links: WorkEntry["data"]["links"]) =>
-  links.find(({ type }) => type === "website")?.url ?? links[0]?.url;

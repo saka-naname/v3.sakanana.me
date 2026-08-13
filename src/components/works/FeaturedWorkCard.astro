@@ -1,12 +1,7 @@
 ---
 import { Image } from "astro:assets";
 
-import {
-  formatPublishedDate,
-  getPrimaryUrl,
-  kindLabels,
-  type WorkEntry,
-} from "./work-card";
+import { formatPublishedDate, kindLabels, type WorkEntry } from "./work-card";
 
 interface Props {
   work: WorkEntry;
@@ -17,7 +12,7 @@ interface Props {
 
 const { work, variant, slideIndex, slideCount } = Astro.props;
 const { data } = work;
-const url = getPrimaryUrl(data.links) ?? "#";
+const url = `/works/${work.id}/`;
 ---
 
 <article
