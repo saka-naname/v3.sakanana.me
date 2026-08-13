@@ -21,7 +21,10 @@ const featuredWorks = (worksCuration?.data.featured ?? [])
     const work = workById.get(id);
     return work ? [work] : [];
   })
-  .slice(0, 3);
+  .slice(0, 4);
+const featuredGhosts = Array.from({
+  length: Math.max(0, 4 - featuredWorks.length),
+});
 const availableKinds = kindOrder.filter((kind) =>
   works.some(({ data }) => data.kind === kind),
 );
@@ -66,6 +69,9 @@ const availableKinds = kindOrder.filter((kind) =>
                     slideIndex={index}
                     slideCount={featuredWorks.length}
                   />
+                ))}
+                {featuredGhosts.map(() => (
+                  <div class="featured-ghost" aria-hidden="true" />
                 ))}
               </div>
             </div>
@@ -177,7 +183,7 @@ const availableKinds = kindOrder.filter((kind) =>
       stopOnInteraction: false,
       stopOnMouseEnter: true,
       breakpoints: {
-        "(min-width: 768px)": { active: false },
+        "(min-width: 1080px)": { active: false },
       },
     });
     const embla = EmblaCarousel(
@@ -185,9 +191,10 @@ const availableKinds = kindOrder.filter((kind) =>
       {
         align: "start",
         loop: true,
+        slides: "[data-featured-slide]",
         duration: 28,
         breakpoints: {
-          "(min-width: 768px)": { active: false },
+          "(min-width: 1080px)": { active: false },
           "(prefers-reduced-motion: reduce)": { duration: 0 },
         },
       },
@@ -277,6 +284,9 @@ const availableKinds = kindOrder.filter((kind) =>
 
   .featured-carousel-frame {
     position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin-inline: auto;
   }
 
   .featured-carousel[data-carousel-ready="true"] {
@@ -289,6 +299,10 @@ const availableKinds = kindOrder.filter((kind) =>
     display: flex;
     gap: 16px;
     touch-action: pan-y pinch-zoom;
+  }
+
+  .featured-ghost {
+    display: none;
   }
 
   .carousel-indicators {
@@ -408,23 +422,6 @@ const availableKinds = kindOrder.filter((kind) =>
       font-size: 3rem;
     }
 
-    .featured-carousel,
-    .featured-carousel[data-carousel-ready="true"] {
-      overflow: visible;
-      scroll-snap-type: none;
-    }
-
-    .featured-list {
-      display: grid;
-      grid-template-rows: repeat(2, minmax(0, 1fr));
-      grid-template-columns: minmax(0, 1.45fr) minmax(270px, 0.75fr);
-      gap: 28px 40px;
-    }
-
-    .carousel-indicators {
-      display: none;
-    }
-
     .featured,
     .archive {
       padding-bottom: 72px;
@@ -436,6 +433,40 @@ const availableKinds = kindOrder.filter((kind) =>
   }
 
   @media (width >= 1080px) {
+    .featured-carousel-frame {
+      max-width: none;
+      margin-inline: 0;
+    }
+
+    .featured-carousel,
+    .featured-carousel[data-carousel-ready="true"] {
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+
+    .featured-list {
+      --featured-list-card-height: calc(480px * 0.42 * 3 / 4);
+
+      display: grid;
+      grid-template-rows: repeat(
+        3,
+        minmax(var(--featured-list-card-height), 1fr)
+      );
+      grid-template-columns: minmax(0, 1fr) 480px;
+      gap: 28px 40px;
+      touch-action: auto;
+    }
+
+    .featured-ghost {
+      display: block;
+      grid-column: 2;
+      min-height: var(--featured-list-card-height);
+    }
+
+    .carousel-indicators {
+      display: none;
+    }
+
     .work-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 56px 32px;
