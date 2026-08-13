@@ -97,9 +97,13 @@ const Heading = "h3";
     }
 
     p {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-line-clamp: 2;
       font-size: 0.88rem;
       line-height: 1.7;
       color: var(--color-empress-dark-1);
+      -webkit-box-orient: vertical;
     }
   }
 
@@ -166,9 +170,8 @@ const Heading = "h3";
       }
 
       .featured-image {
-        flex: 1;
-        min-height: 0;
-        aspect-ratio: auto;
+        flex: none;
+        aspect-ratio: 4 / 3;
       }
 
       .featured-copy h3 {
