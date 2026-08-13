@@ -35,25 +35,18 @@ const availableKinds = kindOrder.filter((kind) =>
 
 <Layout
   title="Works | sakanana.me"
-  description="ソフトウェア、イラスト、音楽など、sakanana.me の制作物一覧です。"
+  description="saka-naname の制作物一覧です。"
 >
   <main class="works-page">
-    <header class="page-heading">
-      <p class="eyebrow">Projects &amp; creative practice</p>
-      <div class="heading-row">
-        <h1>Works</h1>
-        <p>
-          ソフトウェア、イラスト、音楽。これまでに作ったものをまとめています。
-        </p>
-      </div>
-    </header>
+    <div class="heading-row">
+      <h1>WORKS</h1>
+    </div>
 
     {
       featuredWorks.length > 0 && (
         <section class="featured" aria-labelledby="featured-title">
           <div class="section-heading">
-            <h2 id="featured-title">Selected</h2>
-            <span>注目の制作</span>
+            <h2 id="featured-title">FEATURED</h2>
           </div>
 
           <div
@@ -118,8 +111,7 @@ const availableKinds = kindOrder.filter((kind) =>
 
     <section class="archive" aria-labelledby="archive-title">
       <div class="section-heading archive-heading">
-        <h2 id="archive-title">All works</h2>
-        <p><span data-result-count>{works.length}</span> projects</p>
+        <h2 id="archive-title">ALL WORKS</h2>
       </div>
 
       <div class="filter-row" role="group" aria-label="作品を種類で絞り込む">
@@ -296,24 +288,10 @@ const availableKinds = kindOrder.filter((kind) =>
     color: var(--color-text);
   }
 
-  .page-heading {
-    padding-block: 48px 56px;
-  }
-
-  .eyebrow,
-  .section-heading span,
   .section-heading p,
   .carousel-controls,
   .filter-row button {
     font-family: var(--font-suse-mono);
-  }
-
-  .eyebrow {
-    margin-bottom: 10px;
-    font-size: 0.72rem;
-    color: var(--color-empress-base);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
   }
 
   .heading-row h1,
@@ -322,19 +300,12 @@ const availableKinds = kindOrder.filter((kind) =>
   }
 
   .heading-row h1 {
-    font-size: clamp(3.25rem, 16vw, 5.5rem);
-    font-weight: 300;
-    line-height: 0.95;
+    padding-bottom: 4px;
+    margin-bottom: 12px;
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 2.5rem;
+    font-weight: 700;
     color: var(--color-empress-dark-2);
-    letter-spacing: -0.035em;
-  }
-
-  .heading-row > p {
-    max-width: 34rem;
-    margin-top: 24px;
-    font-size: 0.95rem;
-    line-height: 1.85;
-    color: var(--color-empress-dark-1);
   }
 
   .featured,
@@ -386,7 +357,6 @@ const availableKinds = kindOrder.filter((kind) =>
   .featured-list {
     display: flex;
     gap: 16px;
-    padding-bottom: 8px;
     touch-action: pan-y pinch-zoom;
   }
 
@@ -454,7 +424,7 @@ const availableKinds = kindOrder.filter((kind) =>
     position: relative;
     flex: none;
     padding: 0 0 5px;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--color-empress-light-1);
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -512,21 +482,6 @@ const availableKinds = kindOrder.filter((kind) =>
   }
 
   @media (width >= 680px) {
-    .page-heading {
-      padding-block: 72px 80px;
-    }
-
-    .heading-row {
-      display: grid;
-      grid-template-columns: 1fr minmax(18rem, 28rem);
-      gap: 48px;
-      align-items: end;
-    }
-
-    .heading-row > p {
-      margin: 0 0 4px;
-    }
-
     .work-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -537,6 +492,10 @@ const availableKinds = kindOrder.filter((kind) =>
   }
 
   @media (width >= 768px) {
+    .heading-row h1 {
+      font-size: 3rem;
+    }
+
     .featured-carousel,
     .featured-carousel[data-carousel-ready="true"] {
       overflow: visible;
@@ -548,8 +507,6 @@ const availableKinds = kindOrder.filter((kind) =>
       grid-template-rows: repeat(2, minmax(0, 1fr));
       grid-template-columns: minmax(0, 1.45fr) minmax(270px, 0.75fr);
       gap: 28px 40px;
-      padding: 0 0 48px;
-      border-bottom: 1px solid var(--color-dessert-dark-2);
     }
 
     .carousel-controls {
@@ -558,7 +515,11 @@ const availableKinds = kindOrder.filter((kind) =>
 
     .featured,
     .archive {
-      padding-bottom: 96px;
+      padding-bottom: 72px;
+    }
+
+    .filter-button {
+      font-size: 0.9rem;
     }
   }
 
