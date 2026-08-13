@@ -14,5 +14,14 @@ const dateFormatter = new Intl.DateTimeFormat("ja-JP", {
   month: "2-digit",
 });
 
+const fullDateFormatter = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 export const formatPublishedDate = (date: Date) =>
   dateFormatter.format(date).replace("/", ".");
+
+export const formatPublishedDateFull = (date: Date) =>
+  fullDateFormatter.format(date).replaceAll("/", ".");

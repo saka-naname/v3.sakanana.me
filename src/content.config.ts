@@ -4,17 +4,30 @@ import { z } from "astro/zod";
 import { reference } from "astro:content";
 
 const work = defineCollection({
-  loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/works" }),
+  loader: glob({
+    pattern: "**/[^_]*.{md,mdx}",
+    base: "./src/content/works",
+  }),
   schema: ({ image }) => {
     const base = z.object({
       title: z.string().min(1),
       summary: z.string().min(1),
+      slug: z
+        .string()
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          "slug must use lowercase ASCII kebab-case",
+        ),
 
       status: z.enum(["wip", "released"]),
-      cover: z.object({
-        image: image(),
-        alt: z.string().min(1),
-      }),
+      images: z
+        .array(
+          z.object({
+            image: image(),
+            alt: z.string().min(1),
+          }),
+        )
+        .min(1),
 
       collaboration: z.discriminatedUnion("type", [
         z.object({

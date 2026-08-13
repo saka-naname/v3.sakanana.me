@@ -1,0 +1,296 @@
+---
+import { Image } from "astro:assets";
+
+import type { WorkEntry } from "./work-card";
+
+interface Props {
+  images: WorkEntry["data"]["images"];
+  title: string;
+}
+
+const { images, title } = Astro.props;
+const hasMultipleImages = images.length > 1;
+---
+
+<section class="work-gallery" aria-label={`${title}の画像`} data-work-gallery>
+  <div
+    class="gallery-viewport"
+    data-gallery-viewport
+    tabindex={hasMultipleImages ? "0" : undefined}
+  >
+    <div class="gallery-track">
+      {
+        images.map((image, index) => (
+          <figure
+            class="gallery-slide"
+            role="group"
+            aria-roledescription="スライド"
+            aria-label={`${index + 1} / ${images.length}`}
+          >
+            <Image
+              src={image.image}
+              alt={image.alt}
+              widths={[640, 960, 1280, 1600]}
+              sizes="(min-width: 1288px) 864px, (min-width: 960px) calc(100vw - 376px), calc(100vw - 48px)"
+              loading={index === 0 ? "eager" : "lazy"}
+              layout="none"
+            />
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+
+  {
+    hasMultipleImages && (
+      <>
+        <div class="gallery-controls">
+          <button
+            type="button"
+            class="gallery-arrow"
+            aria-label="前の画像"
+            data-gallery-previous
+          >
+            ←
+          </button>
+          <p class="gallery-count" aria-live="polite" aria-atomic="true">
+            <span data-gallery-current>1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">枚目、全</span>
+            <span>{images.length}</span>
+            <span class="visually-hidden">枚</span>
+          </p>
+          <button
+            type="button"
+            class="gallery-arrow"
+            aria-label="次の画像"
+            data-gallery-next
+          >
+            →
+          </button>
+        </div>
+
+        <div class="gallery-thumbnails" aria-label="表示する画像を選択">
+          {images.map((image, index) => (
+            <button
+              type="button"
+              class="gallery-thumbnail"
+              aria-label={`${index + 1}枚目を表示`}
+              aria-pressed={index === 0 ? "true" : "false"}
+              data-gallery-thumbnail
+            >
+              <Image
+                src={image.image}
+                alt=""
+                widths={[96, 152]}
+                sizes="76px"
+                loading="lazy"
+                layout="none"
+              />
+            </button>
+          ))}
+        </div>
+      </>
+    )
+  }
+</section>
+
+<script>
+  import EmblaCarousel from "embla-carousel";
+
+  const galleries = document.querySelectorAll<HTMLElement>(
+    "[data-work-gallery]",
+  );
+
+  galleries.forEach((gallery) => {
+    const viewport = gallery.querySelector<HTMLElement>(
+      "[data-gallery-viewport]",
+    );
+    const previousButton = gallery.querySelector<HTMLButtonElement>(
+      "[data-gallery-previous]",
+    );
+    const nextButton = gallery.querySelector<HTMLButtonElement>(
+      "[data-gallery-next]",
+    );
+    const current = gallery.querySelector<HTMLElement>(
+      "[data-gallery-current]",
+    );
+    const thumbnails = Array.from(
+      gallery.querySelectorAll<HTMLButtonElement>("[data-gallery-thumbnail]"),
+    );
+
+    if (!viewport || !previousButton || !nextButton || thumbnails.length < 2) {
+      return;
+    }
+
+    const embla = EmblaCarousel(viewport, {
+      align: "start",
+      containScroll: "trimSnaps",
+      loop: false,
+      duration: 24,
+      breakpoints: {
+        "(prefers-reduced-motion: reduce)": { duration: 0 },
+      },
+    });
+
+    const updateGallery = () => {
+      const selectedIndex = embla.selectedScrollSnap();
+
+      previousButton.disabled = !embla.canScrollPrev();
+      nextButton.disabled = !embla.canScrollNext();
+      if (current) current.textContent = String(selectedIndex + 1);
+
+      thumbnails.forEach((thumbnail, index) => {
+        thumbnail.setAttribute("aria-pressed", String(index === selectedIndex));
+      });
+    };
+
+    previousButton.addEventListener("click", () => embla.scrollPrev());
+    nextButton.addEventListener("click", () => embla.scrollNext());
+    thumbnails.forEach((thumbnail, index) => {
+      thumbnail.addEventListener("click", () => embla.scrollTo(index));
+    });
+    viewport.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        embla.scrollPrev();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        embla.scrollNext();
+      }
+    });
+
+    embla.on("select", updateGallery).on("reInit", updateGallery);
+    gallery.dataset.galleryReady = "true";
+    updateGallery();
+  });
+</script>
+
+<style>
+  .work-gallery {
+    min-width: 0;
+  }
+
+  .gallery-viewport {
+    overflow: hidden;
+    background: var(--color-dessert-dark-1);
+    border: 1px solid var(--color-dessert-dark-2);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-empress-dark-2);
+      outline-offset: 3px;
+    }
+  }
+
+  .gallery-track {
+    display: flex;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .gallery-slide {
+    display: grid;
+    flex: 0 0 100%;
+    place-items: center;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .gallery-controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .gallery-arrow {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    font-family: var(--font-suse-mono);
+    color: var(--color-empress-dark-2);
+    cursor: pointer;
+    border: 1px solid var(--color-dessert-dark-3);
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.35;
+    }
+
+    &:is(:hover, :focus-visible):not(:disabled) {
+      color: var(--color-background);
+      background: var(--color-empress-dark-2);
+      border-color: var(--color-empress-dark-2);
+    }
+  }
+
+  .gallery-count {
+    min-width: 48px;
+    font-family: var(--font-suse-mono);
+    font-size: 0.72rem;
+    color: var(--color-empress-base);
+    text-align: center;
+    letter-spacing: 0.08em;
+  }
+
+  .gallery-thumbnails {
+    display: flex;
+    gap: 8px;
+    padding: 3px;
+    margin-top: 12px;
+    overflow-x: auto;
+  }
+
+  .gallery-thumbnail {
+    flex: 0 0 64px;
+    height: 48px;
+    padding: 2px;
+    cursor: pointer;
+    border: 1px solid var(--color-dessert-dark-2);
+
+    &[aria-pressed="true"] {
+      outline: 1px solid var(--color-empress-dark-2);
+      border-color: var(--color-empress-dark-2);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-empress-dark-2);
+      outline-offset: 2px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
+    clip-path: inset(50%);
+  }
+
+  @media (width >= 680px) {
+    .gallery-thumbnail {
+      flex-basis: 76px;
+      height: 56px;
+    }
+  }
+</style>
