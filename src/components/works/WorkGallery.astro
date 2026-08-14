@@ -43,54 +43,26 @@ const hasMultipleImages = images.length > 1;
 
   {
     hasMultipleImages && (
-      <>
-        <div class="gallery-controls">
+      <div class="gallery-thumbnails" aria-label="表示する画像を選択">
+        {images.map((image, index) => (
           <button
             type="button"
-            class="gallery-arrow"
-            aria-label="前の画像"
-            data-gallery-previous
+            class="gallery-thumbnail"
+            aria-label={`${index + 1}枚目を表示`}
+            aria-pressed={index === 0 ? "true" : "false"}
+            data-gallery-thumbnail
           >
-            ←
+            <Image
+              src={image.image}
+              alt=""
+              widths={[96, 152]}
+              sizes="76px"
+              loading="lazy"
+              layout="none"
+            />
           </button>
-          <p class="gallery-count" aria-live="polite" aria-atomic="true">
-            <span data-gallery-current>1</span>
-            <span aria-hidden="true"> / </span>
-            <span class="visually-hidden">枚目、全</span>
-            <span>{images.length}</span>
-            <span class="visually-hidden">枚</span>
-          </p>
-          <button
-            type="button"
-            class="gallery-arrow"
-            aria-label="次の画像"
-            data-gallery-next
-          >
-            →
-          </button>
-        </div>
-
-        <div class="gallery-thumbnails" aria-label="表示する画像を選択">
-          {images.map((image, index) => (
-            <button
-              type="button"
-              class="gallery-thumbnail"
-              aria-label={`${index + 1}枚目を表示`}
-              aria-pressed={index === 0 ? "true" : "false"}
-              data-gallery-thumbnail
-            >
-              <Image
-                src={image.image}
-                alt=""
-                widths={[96, 152]}
-                sizes="76px"
-                loading="lazy"
-                layout="none"
-              />
-            </button>
-          ))}
-        </div>
-      </>
+        ))}
+      </div>
     )
   }
 </section>
@@ -106,20 +78,11 @@ const hasMultipleImages = images.length > 1;
     const viewport = gallery.querySelector<HTMLElement>(
       "[data-gallery-viewport]",
     );
-    const previousButton = gallery.querySelector<HTMLButtonElement>(
-      "[data-gallery-previous]",
-    );
-    const nextButton = gallery.querySelector<HTMLButtonElement>(
-      "[data-gallery-next]",
-    );
-    const current = gallery.querySelector<HTMLElement>(
-      "[data-gallery-current]",
-    );
     const thumbnails = Array.from(
       gallery.querySelectorAll<HTMLButtonElement>("[data-gallery-thumbnail]"),
     );
 
-    if (!viewport || !previousButton || !nextButton || thumbnails.length < 2) {
+    if (!viewport || thumbnails.length < 2) {
       return;
     }
 
@@ -136,17 +99,10 @@ const hasMultipleImages = images.length > 1;
     const updateGallery = () => {
       const selectedIndex = embla.selectedScrollSnap();
 
-      previousButton.disabled = !embla.canScrollPrev();
-      nextButton.disabled = !embla.canScrollNext();
-      if (current) current.textContent = String(selectedIndex + 1);
-
       thumbnails.forEach((thumbnail, index) => {
         thumbnail.setAttribute("aria-pressed", String(index === selectedIndex));
       });
     };
-
-    previousButton.addEventListener("click", () => embla.scrollPrev());
-    nextButton.addEventListener("click", () => embla.scrollNext());
     thumbnails.forEach((thumbnail, index) => {
       thumbnail.addEventListener("click", () => embla.scrollTo(index));
     });
@@ -202,45 +158,6 @@ const hasMultipleImages = images.length > 1;
       height: 100%;
       object-fit: contain;
     }
-  }
-
-  .gallery-controls {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    justify-content: flex-end;
-    margin-top: 12px;
-  }
-
-  .gallery-arrow {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    font-family: var(--font-suse-mono);
-    color: var(--color-empress-dark-2);
-    cursor: pointer;
-    border: 1px solid var(--color-dessert-dark-3);
-
-    &:disabled {
-      cursor: default;
-      opacity: 0.35;
-    }
-
-    &:is(:hover, :focus-visible):not(:disabled) {
-      color: var(--color-background);
-      background: var(--color-empress-dark-2);
-      border-color: var(--color-empress-dark-2);
-    }
-  }
-
-  .gallery-count {
-    min-width: 48px;
-    font-family: var(--font-suse-mono);
-    font-size: 0.72rem;
-    color: var(--color-empress-base);
-    text-align: center;
-    letter-spacing: 0.08em;
   }
 
   .gallery-thumbnails {
