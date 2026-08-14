@@ -106,6 +106,16 @@ const platformLabels = {
         <p>{data.summary}</p>
       </header>
 
+      {
+        data.tags.length > 0 && (
+          <ul class="tag-list" aria-label="タグ">
+            {data.tags.map((tag) => (
+              <li>{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+
       <div class="work-gallery">
         <WorkGallery images={data.images} title={data.title} />
       </div>
@@ -146,16 +156,6 @@ const platformLabels = {
                 </div>
               )}
             </dl>
-          )
-        }
-
-        {
-          data.tags.length > 0 && (
-            <ul class="tag-list" aria-label="タグ">
-              {data.tags.map((tag) => (
-                <li>{tag}</li>
-              ))}
-            </ul>
           )
         }
 
@@ -286,6 +286,7 @@ const platformLabels = {
       "title"
       "gallery"
       "summary"
+      "tags"
       "meta"
       "body";
     margin-top: 24px;
@@ -339,14 +340,15 @@ const platformLabels = {
   .tag-list {
     display: flex;
     flex-wrap: wrap;
+    grid-area: tags;
     gap: 6px 14px;
-    padding: 20px 0 0;
-    margin: 20px 0 0;
+    max-width: 760px;
+    padding: 0;
+    margin: 16px 0 0;
     font-family: var(--font-suse-mono);
     font-size: 0.66rem;
     color: var(--color-empress-base);
     list-style: none;
-    border-top: 1px solid var(--color-dessert-dark-2);
 
     li::before {
       content: "#";
@@ -448,6 +450,7 @@ const platformLabels = {
         "labels"
         "title"
         "summary"
+        "tags"
         "meta"
         "gallery"
         "body";
@@ -486,6 +489,7 @@ const platformLabels = {
         "labels labels"
         "title title"
         "summary summary"
+        "tags tags"
         "gallery meta"
         "body meta";
       grid-template-columns: minmax(0, 840px) minmax(280px, 1fr);
