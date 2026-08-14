@@ -196,7 +196,7 @@ const availableKinds = kindOrder.filter((kind) =>
       stopOnInteraction: false,
       stopOnMouseEnter: true,
       breakpoints: {
-        "(min-width: 1080px)": { active: false },
+        "(min-width: 1024px)": { active: false },
       },
     });
     const embla = EmblaCarousel(
@@ -207,7 +207,7 @@ const availableKinds = kindOrder.filter((kind) =>
         slides: "[data-featured-slide]",
         duration: 28,
         breakpoints: {
-          "(min-width: 1080px)": { active: false },
+          "(min-width: 1024px)": { active: false },
           "(prefers-reduced-motion: reduce)": { duration: 0 },
         },
       },
@@ -228,7 +228,7 @@ const availableKinds = kindOrder.filter((kind) =>
   }
 
   if (carousel && featuredList) {
-    const desktopLayout = window.matchMedia("(min-width: 1080px)");
+    const desktopLayout = window.matchMedia("(min-width: 1024px)");
     const columnGap = 40;
     const secondaryMinWidth = 480;
     let layoutFrame = 0;
@@ -518,7 +518,7 @@ const availableKinds = kindOrder.filter((kind) =>
     }
   }
 
-  @media (width >= 1080px) {
+  @media (width >= 1024px) {
     .featured-carousel-frame {
       max-width: none;
       margin-inline: 0;

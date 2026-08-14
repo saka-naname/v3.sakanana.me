@@ -27,8 +27,8 @@ const url = `/works/${data.slug}/`;
         alt={data.images[0].alt}
         widths={[480, 720, 960]}
         sizes={variant === "card"
-          ? "(min-width: 1288px) 720px, (min-width: 1080px) calc(100vw - 568px), (min-width: 688px) 640px, calc(100vw - 48px)"
-          : "(min-width: 1080px) 200px, (min-width: 688px) 640px, calc(100vw - 48px)"}
+          ? "(min-width: 1288px) 720px, (min-width: 1024px) calc(100vw - 568px), (min-width: 688px) 640px, calc(100vw - 48px)"
+          : "(min-width: 1024px) 200px, (min-width: 688px) 640px, calc(100vw - 48px)"}
         loading="eager"
         layout="none"
       />
@@ -171,7 +171,7 @@ const url = `/works/${data.slug}/`;
     }
   }
 
-  @media (width >= 1080px) {
+  @media (width >= 1024px) {
     .variant-card {
       grid-row: 1 / 4;
       grid-column: 1;
