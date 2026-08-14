@@ -4,6 +4,7 @@ import "../../styles/globals.css";
 import type { GetStaticPaths } from "astro";
 import { Font, getImage } from "astro:assets";
 import { type CollectionEntry, getCollection, render } from "astro:content";
+import { Icon } from "astro-icon/components";
 
 import VideoEmbed from "../../components/works/VideoEmbed.astro";
 import {
@@ -94,7 +95,7 @@ const platformLabels = {
   openGraphType="article"
 >
   <main class="work-detail">
-    <a class="back-link" href="/works/">← Works</a>
+    <a class="back-link" href="/works/">WORKS</a>
 
     <div class="detail-layout">
       <header class="work-header">
@@ -171,7 +172,12 @@ const platformLabels = {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      → {link.label}
+                      <Icon
+                        name="hugeicons:link-square-02"
+                        width="1em"
+                        height="1em"
+                      />
+                      {link.label}
                     </a>
                   </li>
                 ))}
@@ -191,7 +197,10 @@ const platformLabels = {
         <nav class="work-navigation" aria-label="前後の作品">
           {newerWork ? (
             <a href={`/works/${newerWork.data.slug}/`}>
-              <span>← 新しい作品</span>
+              <span>
+                <Icon name="hugeicons:arrow-left-01" />
+                <span>NEXT</span>
+              </span>
               <strong>{newerWork.data.title}</strong>
             </a>
           ) : (
@@ -199,7 +208,10 @@ const platformLabels = {
           )}
           {olderWork && (
             <a class="older-work" href={`/works/${olderWork.data.slug}/`}>
-              <span>古い作品 →</span>
+              <span>
+                <span>PREV</span>
+                <Icon name="hugeicons:arrow-right-01" />
+              </span>
               <strong>{olderWork.data.title}</strong>
             </a>
           )}
@@ -217,10 +229,13 @@ const platformLabels = {
   }
 
   .back-link {
-    display: inline-block;
-    margin-top: 32px;
-    font-family: var(--font-suse-mono);
-    font-size: 0.78rem;
+    display: inline-flex;
+    gap: 0.35em;
+    align-items: center;
+    margin-top: 0.25rem;
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 2rem;
+    font-weight: 700;
     color: var(--color-empress-base);
     text-underline-offset: 0.22em;
 
@@ -375,6 +390,9 @@ const platformLabels = {
     }
 
     a {
+      display: inline-flex;
+      gap: 0.35em;
+      align-items: center;
       color: var(--color-empress-dark-1);
       text-underline-offset: 0.2em;
 
@@ -410,6 +428,9 @@ const platformLabels = {
       text-decoration: none;
 
       span {
+        display: inline-flex;
+        gap: 0.35em;
+        align-items: center;
         font-family: var(--font-suse-mono);
         font-size: 0.65rem;
         color: var(--color-empress-base);
@@ -438,7 +459,7 @@ const platformLabels = {
     }
 
     .back-link {
-      margin-top: 48px;
+      margin-top: 0.25rem;
     }
 
     .detail-layout {
@@ -498,6 +519,18 @@ const platformLabels = {
 
     .primary-meta {
       grid-template-columns: 1fr;
+    }
+
+    .work-navigation a {
+      &.older-work {
+        span {
+          justify-content: end;
+        }
+
+        strong {
+          text-align: end;
+        }
+      }
     }
   }
 </style>
