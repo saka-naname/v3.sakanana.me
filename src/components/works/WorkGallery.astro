@@ -1,0 +1,362 @@
+---
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+
+import type { WorkEntry } from "./work-card";
+
+interface Props {
+  images: WorkEntry["data"]["images"];
+  title: string;
+}
+
+const { images, title } = Astro.props;
+const hasMultipleImages = images.length > 1;
+---
+
+<section class="work-gallery" aria-label={`${title}の画像`} data-work-gallery>
+  <div class="gallery-frame">
+    <div
+      class="gallery-viewport"
+      data-gallery-viewport
+      tabindex={hasMultipleImages ? "0" : undefined}
+    >
+      <div class="gallery-track">
+        {
+          images.map((image, index) => (
+            <figure
+              class="gallery-slide"
+              role="group"
+              aria-roledescription="スライド"
+              aria-label={`${index + 1} / ${images.length}`}
+            >
+              <Image
+                src={image.image}
+                alt={image.alt}
+                widths={[640, 960, 1280, 1600]}
+                sizes="(min-width: 1288px) 864px, (min-width: 960px) calc(100vw - 376px), calc(100vw - 48px)"
+                loading={index === 0 ? "eager" : "lazy"}
+                layout="none"
+              />
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+
+    {
+      hasMultipleImages && (
+        <div class="gallery-controls">
+          <button
+            type="button"
+            class="gallery-control gallery-control-previous"
+            aria-label="前の画像を表示"
+            data-gallery-previous
+            disabled
+          >
+            <Icon name="hugeicons:arrow-left-01" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            class="gallery-control gallery-control-next"
+            aria-label="次の画像を表示"
+            data-gallery-next
+          >
+            <Icon name="hugeicons:arrow-right-01" aria-hidden="true" />
+          </button>
+        </div>
+      )
+    }
+  </div>
+
+  {
+    hasMultipleImages && (
+      <div class="gallery-thumbnails" aria-label="表示する画像を選択">
+        {images.map((image, index) => (
+          <button
+            type="button"
+            class="gallery-thumbnail"
+            aria-label={`${index + 1}枚目を表示`}
+            aria-pressed={index === 0 ? "true" : "false"}
+            data-gallery-thumbnail
+          >
+            <Image
+              src={image.image}
+              alt=""
+              widths={[96, 152]}
+              sizes="76px"
+              loading="lazy"
+              layout="none"
+            />
+          </button>
+        ))}
+      </div>
+    )
+  }
+</section>
+
+<script>
+  import EmblaCarousel from "embla-carousel";
+
+  const galleries = document.querySelectorAll<HTMLElement>(
+    "[data-work-gallery]",
+  );
+
+  galleries.forEach((gallery) => {
+    const viewport = gallery.querySelector<HTMLElement>(
+      "[data-gallery-viewport]",
+    );
+    const thumbnails = Array.from(
+      gallery.querySelectorAll<HTMLButtonElement>("[data-gallery-thumbnail]"),
+    );
+    const previousButton = gallery.querySelector<HTMLButtonElement>(
+      "[data-gallery-previous]",
+    );
+    const nextButton = gallery.querySelector<HTMLButtonElement>(
+      "[data-gallery-next]",
+    );
+
+    if (!viewport || !previousButton || !nextButton || thumbnails.length < 2) {
+      return;
+    }
+
+    const embla = EmblaCarousel(viewport, {
+      align: "start",
+      containScroll: "trimSnaps",
+      loop: false,
+      duration: 24,
+      breakpoints: {
+        "(prefers-reduced-motion: reduce)": { duration: 0 },
+      },
+    });
+    let controlsTimeout: number | undefined;
+
+    const showControlsTemporarily = () => {
+      gallery.dataset.controlsVisible = "true";
+      window.clearTimeout(controlsTimeout);
+      controlsTimeout = window.setTimeout(() => {
+        delete gallery.dataset.controlsVisible;
+      }, 1200);
+    };
+
+    const updateGallery = () => {
+      const selectedIndex = embla.selectedScrollSnap();
+
+      thumbnails.forEach((thumbnail, index) => {
+        thumbnail.setAttribute("aria-pressed", String(index === selectedIndex));
+      });
+      previousButton.disabled = !embla.canScrollPrev();
+      nextButton.disabled = !embla.canScrollNext();
+    };
+    previousButton.addEventListener("click", () => {
+      embla.scrollPrev();
+      showControlsTemporarily();
+    });
+    nextButton.addEventListener("click", () => {
+      embla.scrollNext();
+      showControlsTemporarily();
+    });
+    viewport.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse") {
+        showControlsTemporarily();
+      }
+    });
+    thumbnails.forEach((thumbnail, index) => {
+      thumbnail.addEventListener("click", () => embla.scrollTo(index));
+    });
+    viewport.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        embla.scrollPrev();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        embla.scrollNext();
+      }
+    });
+
+    embla.on("select", updateGallery).on("reInit", updateGallery);
+    gallery.dataset.galleryReady = "true";
+    updateGallery();
+  });
+</script>
+
+<style>
+  .work-gallery {
+    min-width: 0;
+    max-width: 840px;
+  }
+
+  .gallery-frame {
+    position: relative;
+  }
+
+  .gallery-viewport {
+    overflow: hidden;
+    background: var(--color-dessert-dark-1);
+    border: 1px solid var(--color-dessert-dark-2);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-empress-dark-2);
+      outline-offset: 3px;
+    }
+  }
+
+  .gallery-track {
+    display: flex;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .gallery-controls {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    visibility: hidden;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 8px;
+    pointer-events: none;
+    opacity: 0;
+    transition:
+      opacity 0.2s ease-out,
+      visibility 0.2s;
+  }
+
+  .gallery-frame:has(:focus-visible) .gallery-controls,
+  .work-gallery[data-controls-visible="true"] .gallery-controls {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    .gallery-frame:hover .gallery-controls {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  .gallery-control {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: #fff;
+    pointer-events: auto;
+    cursor: pointer;
+    background: rgb(0 0 0 / 48%);
+    border: 1px solid rgb(255 255 255 / 32%);
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+    transition:
+      background-color 0.2s ease-out,
+      opacity 0.2s ease-out,
+      transform 0.2s ease-out;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    &:hover {
+      background: rgb(0 0 0 / 68%);
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      pointer-events: none;
+      cursor: default;
+      opacity: 0;
+    }
+  }
+
+  .gallery-slide {
+    display: grid;
+    flex: 0 0 100%;
+    place-items: center;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .gallery-thumbnails {
+    display: flex;
+    gap: 8px;
+    padding: 3px;
+    margin-top: 12px;
+    overflow-x: auto;
+  }
+
+  .gallery-thumbnail {
+    flex: 0 0 64px;
+    height: 48px;
+    padding: 2px;
+    cursor: pointer;
+    border: 1px solid var(--color-dessert-dark-2);
+
+    &[aria-pressed="true"] {
+      outline: 1px solid var(--color-empress-dark-2);
+      border-color: var(--color-empress-dark-2);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-empress-dark-2);
+      outline-offset: 2px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
+    clip-path: inset(50%);
+  }
+
+  @media (width >= 680px) {
+    .gallery-controls {
+      padding-inline: 16px;
+    }
+
+    .gallery-control {
+      width: 48px;
+      height: 48px;
+    }
+
+    .gallery-thumbnail {
+      flex-basis: 76px;
+      height: 56px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-controls,
+    .gallery-control {
+      transition: none;
+    }
+  }
+</style>

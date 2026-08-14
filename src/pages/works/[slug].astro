@@ -1,0 +1,594 @@
+---
+import "../../styles/globals.css";
+
+import type { GetStaticPaths } from "astro";
+import { Font, getImage } from "astro:assets";
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import { Icon } from "astro-icon/components";
+
+import VideoEmbed from "../../components/works/VideoEmbed.astro";
+import {
+  formatPublishedDateFull,
+  kindLabels,
+} from "../../components/works/work-card";
+import WorkGallery from "../../components/works/WorkGallery.astro";
+import Layout from "../../layouts/Layout.astro";
+
+type WorkEntry = CollectionEntry<"work">;
+
+interface Props {
+  work: WorkEntry;
+  newerWork?: WorkEntry;
+  olderWork?: WorkEntry;
+}
+
+export const getStaticPaths = (async () => {
+  const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
+    (a, b) =>
+      b.data.publishedAt.getTime() - a.data.publishedAt.getTime() ||
+      a.data.slug.localeCompare(b.data.slug),
+  );
+
+  const slugs = new Set<string>();
+  for (const work of works) {
+    if (slugs.has(work.data.slug)) {
+      throw new Error(`Duplicate work slug: ${work.data.slug}`);
+    }
+    slugs.add(work.data.slug);
+  }
+
+  return works.map((work, index) => ({
+    params: { slug: work.data.slug },
+    props: {
+      work,
+      newerWork: works[index - 1],
+      olderWork: works[index + 1],
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { work, newerWork, olderWork } = Astro.props;
+const { data } = work;
+const { Content } = await render(work);
+const canonical = new URL(`/works/${data.slug}/`, Astro.site ?? Astro.url);
+const representativeImage = data.images[0].image;
+const optimizedOpenGraphImage =
+  representativeImage.format === "svg"
+    ? representativeImage
+    : await getImage({
+        src: representativeImage,
+        width: 1200,
+        height: 630,
+        fit: "cover",
+        format: "webp",
+      });
+const openGraphImage = new URL(
+  optimizedOpenGraphImage.src,
+  Astro.site ?? Astro.url,
+);
+
+const collaborationLabel =
+  data.collaboration.type === "personal"
+    ? "個人制作"
+    : data.collaboration.organization;
+
+const platformLabels = {
+  "web-frontend": "Web Frontend",
+  "web-backend": "Web Backend",
+  desktop: "Desktop",
+  cli: "CLI",
+  other: "Other",
+} as const;
+---
+
+<head>
+  <meta charset="utf-8" />
+  <Font cssVariable="--font-kiyosuna-sans" />
+  <Font cssVariable="--font-suse-mono" />
+</head>
+
+<Layout
+  title={`${data.title} | Works | sakanana.me`}
+  description={data.summary}
+  canonical={canonical}
+  openGraphImage={openGraphImage}
+  openGraphType="article"
+>
+  <main class="work-detail">
+    <a class="back-link" href="/works/">WORKS</a>
+
+    <div class="detail-layout">
+      <header class="work-header">
+        <div class="work-labels">
+          <span class="kind-label">{kindLabels[data.kind]}</span>
+          {data.status === "wip" && <span class="status-label">WIP</span>}
+        </div>
+        <h1>{data.title}</h1>
+        <p>{data.summary}</p>
+      </header>
+
+      {
+        data.tags.length > 0 && (
+          <ul class="tag-list" aria-label="タグ">
+            {data.tags.map((tag) => (
+              <li>{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+
+      <div class="work-gallery">
+        <WorkGallery images={data.images} title={data.title} />
+      </div>
+
+      <aside class="work-meta" aria-label="作品情報">
+        <dl class="primary-meta">
+          <div>
+            <dt>公開日</dt>
+            <dd>
+              <time datetime={data.publishedAt.toISOString()}>
+                {formatPublishedDateFull(data.publishedAt)}
+              </time>
+            </dd>
+          </div>
+          <div>
+            <dt>制作背景</dt>
+            <dd>{collaborationLabel}</dd>
+          </div>
+        </dl>
+
+        {
+          data.kind === "development" && (
+            <dl class="development-meta">
+              {data.details.platforms.length > 0 && (
+                <div>
+                  <dt>プラットフォーム</dt>
+                  <dd>
+                    {data.details.platforms
+                      .map((platform) => platformLabels[platform])
+                      .join(", ")}
+                  </dd>
+                </div>
+              )}
+              {data.details.stacks.length > 0 && (
+                <div>
+                  <dt>技術スタック</dt>
+                  <dd>{data.details.stacks.join(", ")}</dd>
+                </div>
+              )}
+            </dl>
+          )
+        }
+
+        {
+          data.links.length > 0 && (
+            <div class="work-links">
+              <h2>リンク</h2>
+              <ul>
+                {data.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Icon
+                        name="hugeicons:link-square-02"
+                        width="1em"
+                        height="1em"
+                      />
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+
+      <article class="work-body">
+        <Content components={{ VideoEmbed }} />
+      </article>
+    </div>
+
+    {
+      (newerWork || olderWork) && (
+        <nav class="work-navigation" aria-label="前後の作品">
+          {newerWork ? (
+            <a href={`/works/${newerWork.data.slug}/`}>
+              <span>
+                <Icon name="hugeicons:arrow-left-01" />
+                <span>NEXT</span>
+              </span>
+              <strong>{newerWork.data.title}</strong>
+            </a>
+          ) : (
+            <span aria-hidden="true" />
+          )}
+          {olderWork && (
+            <a class="older-work" href={`/works/${olderWork.data.slug}/`}>
+              <span>
+                <span>PREV</span>
+                <Icon name="hugeicons:arrow-right-01" />
+              </span>
+              <strong>{olderWork.data.title}</strong>
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </main>
+</Layout>
+
+<style>
+  .work-detail {
+    width: var(--container);
+    padding-bottom: 64px;
+    margin-inline: auto;
+  }
+
+  .back-link {
+    display: inline-flex;
+    gap: 0.35em;
+    align-items: center;
+    margin-top: 0.25rem;
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-empress-base);
+    text-underline-offset: 0.22em;
+
+    &:is(:hover, :focus-visible) {
+      color: var(--color-text);
+    }
+  }
+
+  .work-header {
+    display: contents;
+
+    h1,
+    > p {
+      max-width: 760px;
+    }
+
+    h1 {
+      grid-area: title;
+      margin-top: 12px;
+      font-family: var(--font-kiyosuna-sans);
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--color-empress-dark-2);
+      letter-spacing: -0.015em;
+    }
+
+    > p {
+      grid-area: summary;
+      margin-top: 24px;
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      line-height: 1.8;
+      color: var(--color-empress-dark-1);
+    }
+  }
+
+  .work-labels {
+    display: flex;
+    grid-area: labels;
+    gap: 12px;
+    align-items: center;
+    max-width: 760px;
+    font-family: var(--font-suse-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .kind-label {
+    color: var(--color-empress-dark-2);
+  }
+
+  .status-label {
+    padding: 2px 7px;
+    color: var(--color-empress-dark-2);
+    border: 1px solid var(--color-dessert-dark-3);
+  }
+
+  .detail-layout {
+    display: grid;
+    grid-template-areas:
+      "labels"
+      "title"
+      "gallery"
+      "summary"
+      "tags"
+      "meta"
+      "body";
+    margin-top: 24px;
+  }
+
+  .work-gallery {
+    grid-area: gallery;
+    min-width: 0;
+    max-width: 840px;
+    margin-top: 32px;
+  }
+
+  .work-meta {
+    grid-area: meta;
+    min-width: 0;
+    margin-top: 36px;
+    font-size: 0.875rem;
+    color: var(--color-empress-dark-1);
+
+    dl {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+    }
+
+    dl + dl {
+      margin-top: 32px;
+    }
+
+    dt {
+      margin-bottom: 2px;
+      font-size: 0.64rem;
+      color: var(--color-empress-base);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    dd {
+      margin: 0;
+      line-height: 1.65;
+    }
+  }
+
+  .primary-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    grid-area: tags;
+    gap: 6px 14px;
+    max-width: 760px;
+    padding: 0;
+    margin: 16px 0 0;
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 0.75rem;
+    color: var(--color-empress-base);
+    list-style: none;
+
+    li::before {
+      content: "#";
+    }
+  }
+
+  .work-links {
+    margin-top: 32px;
+
+    h2 {
+      margin-bottom: 8px;
+      font-size: 0.64rem;
+      font-weight: 300;
+      color: var(--color-empress-base);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    ul {
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    a {
+      display: inline-flex;
+      gap: 0.35em;
+      align-items: center;
+      color: var(--color-empress-dark-1);
+      text-underline-offset: 0.2em;
+
+      &:is(:hover, :focus-visible) {
+        color: var(--color-text);
+      }
+    }
+  }
+
+  .work-body {
+    grid-area: body;
+    max-width: 840px;
+    padding-top: 32px;
+    margin-top: 32px;
+    font-size: 0.94rem;
+    line-height: 1.9;
+    color: var(--color-text);
+    border-top: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .work-navigation {
+    display: grid;
+    gap: 32px;
+    padding-top: 32px;
+    margin-top: 16px;
+    border-top: 1px solid var(--color-dessert-dark-2);
+
+    a {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      color: var(--color-text);
+      text-decoration: none;
+
+      span {
+        display: inline-flex;
+        gap: 0.35em;
+        align-items: center;
+        font-family: var(--font-suse-mono);
+        font-size: 0.65rem;
+        color: var(--color-empress-base);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      strong {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.88rem;
+        font-weight: 300;
+        white-space: nowrap;
+      }
+
+      &:is(:hover, :focus-visible) strong {
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+      }
+    }
+  }
+
+  @media (width >= 680px) {
+    .work-detail {
+      padding-bottom: 96px;
+    }
+
+    .back-link {
+      margin-top: 0.25rem;
+    }
+
+    .work-navigation {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      .older-work {
+        text-align: right;
+      }
+    }
+  }
+
+  @media (width >= 960px) {
+    .detail-layout {
+      grid-template-areas:
+        "labels labels"
+        "title title"
+        "summary summary"
+        "tags tags"
+        "gallery meta"
+        "body meta";
+      grid-template-columns: minmax(0, 840px) minmax(280px, 1fr);
+      column-gap: 48px;
+    }
+
+    .work-labels {
+      font-size: 0.75rem;
+    }
+
+    .tag-list {
+      font-size: 0.875rem;
+    }
+
+    .work-gallery {
+      margin-top: 48px;
+    }
+
+    .work-header > p {
+      margin-top: 12px;
+    }
+
+    .work-meta {
+      margin-top: 48px;
+      font-size: 0.9rem;
+
+      dt {
+        font-size: 0.7rem;
+      }
+    }
+
+    .work-links {
+      h2 {
+        font-size: 0.7rem;
+      }
+
+      a {
+        font-size: 0.9rem;
+      }
+    }
+
+    .work-body {
+      padding-top: 0;
+      margin-top: 48px;
+      border-top: 0;
+    }
+
+    .primary-meta {
+      grid-template-columns: 1fr;
+    }
+
+    .work-navigation {
+      margin-top: 32px;
+
+      a {
+        &.older-work {
+          span {
+            justify-content: end;
+          }
+
+          strong {
+            text-align: end;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<style is:global>
+  .work-body > :first-child {
+    margin-top: 0;
+  }
+
+  .work-body p {
+    margin-block: 0 20px;
+  }
+
+  .work-body :is(h2, h3, h4) {
+    margin-block: 48px 16px;
+    font-family: var(--font-kiyosuna-sans);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--color-empress-dark-2);
+  }
+
+  .work-body h2 {
+    font-size: 1.65rem;
+  }
+
+  .work-body h3 {
+    font-size: 1.3rem;
+  }
+
+  .work-body a {
+    color: var(--color-empress-dark-1);
+    text-underline-offset: 0.2em;
+  }
+
+  .work-body :is(ul, ol) {
+    padding-inline-start: 1.5em;
+    margin-block: 0 20px;
+  }
+
+  .work-body blockquote {
+    padding-left: 18px;
+    margin-block: 24px;
+    color: var(--color-empress-dark-1);
+    border-left: 2px solid var(--color-dessert-dark-3);
+  }
+
+  .work-body img {
+    height: auto;
+    margin-block: 32px;
+  }
+</style>

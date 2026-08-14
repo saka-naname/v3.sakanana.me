@@ -41,6 +41,15 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
+## Troubleshooting
+
+If pages or routes remain stale after resolving a duplicate Work `slug` error, restart the background development server:
+
+```sh
+astro dev stop
+astro dev --background
+```
+
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

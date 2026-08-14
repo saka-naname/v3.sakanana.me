@@ -1,0 +1,72 @@
+---
+interface Props {
+  provider: "youtube";
+  id: string;
+  title: string;
+}
+
+const { provider, id, title } = Astro.props;
+
+if (provider !== "youtube") {
+  throw new Error(`Unsupported video provider: ${String(provider)}`);
+}
+if (!/^[A-Za-z0-9_-]{11}$/.test(id)) {
+  throw new Error(`Invalid YouTube video ID: ${id}`);
+}
+if (!title.trim()) {
+  throw new Error("VideoEmbed requires a non-empty title");
+}
+
+const embedUrl = `https://www.youtube-nocookie.com/embed/${id}`;
+const fallbackUrl = `https://www.youtube.com/watch?v=${id}`;
+---
+
+<figure class="video-embed">
+  <div class="video-frame">
+    <iframe
+      src={embedUrl}
+      title={title}
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen></iframe>
+  </div>
+  <figcaption>
+    <a href={fallbackUrl} target="_blank" rel="noopener noreferrer">
+      YouTubeで「{title}」を見る
+    </a>
+  </figcaption>
+</figure>
+
+<style>
+  .video-embed {
+    margin-block: 32px;
+  }
+
+  .video-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-dessert-dark-1);
+    border: 1px solid var(--color-dessert-dark-2);
+
+    iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  }
+
+  figcaption {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--color-empress-base);
+
+    a {
+      color: inherit;
+      text-underline-offset: 0.2em;
+    }
+  }
+</style>
