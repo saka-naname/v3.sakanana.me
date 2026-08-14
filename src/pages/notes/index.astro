@@ -1,0 +1,278 @@
+---
+import "../../styles/globals.css";
+
+import { Font } from "astro:assets";
+import { getCollection } from "astro:content";
+
+import {
+  compareNotesByPublishedAt,
+  noteCategoryLabels,
+  noteCategoryOrder,
+} from "../../components/notes/note";
+import NoteListItem from "../../components/notes/NoteListItem.astro";
+import Layout from "../../layouts/Layout.astro";
+
+const notes = (await getCollection("note", ({ data }) => !data.draft)).sort(
+  compareNotesByPublishedAt,
+);
+const availableCategories = noteCategoryOrder.filter((category) =>
+  notes.some(({ data }) => data.category === category),
+);
+---
+
+<head>
+  <meta charset="utf-8" />
+  <Font cssVariable="--font-kiyosuna-sans" />
+  <Font cssVariable="--font-suse-mono" />
+</head>
+
+<Layout
+  title="Notes | sakanana.me"
+  description="saka-naname の日々の記録や技術メモです。"
+>
+  <main class="notes-page">
+    <div class="heading-row">
+      <h1>NOTES</h1>
+    </div>
+
+    <section class="archive" aria-labelledby="archive-title">
+      <div class="section-heading">
+        <h2 id="archive-title">ALL NOTES</h2>
+      </div>
+
+      {
+        notes.length > 0 ? (
+          <>
+            <div
+              class="filter-row"
+              role="group"
+              aria-label="Noteをカテゴリーで絞り込む"
+            >
+              <button
+                class="filter-button"
+                type="button"
+                data-filter="all"
+                aria-pressed="true"
+              >
+                All
+              </button>
+              {availableCategories.map((category) => (
+                <button
+                  class="filter-button"
+                  type="button"
+                  data-filter={category}
+                  aria-pressed="false"
+                >
+                  {noteCategoryLabels[category]}
+                </button>
+              ))}
+            </div>
+
+            <div class="note-list" data-note-list>
+              {notes.map((note) => (
+                <NoteListItem note={note} />
+              ))}
+            </div>
+
+            <p
+              class="empty-state"
+              data-filter-empty-state
+              aria-live="polite"
+              hidden
+            >
+              このカテゴリーのNoteはまだありません。
+            </p>
+            <p
+              class="visually-hidden"
+              data-filter-status
+              aria-live="polite"
+              aria-atomic="true"
+            />
+          </>
+        ) : (
+          <p class="empty-state">Notes are coming soon.</p>
+        )
+      }
+    </section>
+  </main>
+</Layout>
+
+<script>
+  const filterButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-filter]"),
+  );
+  const noteItems = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-note-category]"),
+  );
+  const emptyState = document.querySelector<HTMLElement>(
+    "[data-filter-empty-state]",
+  );
+  const filterStatus = document.querySelector<HTMLElement>(
+    "[data-filter-status]",
+  );
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const selectedCategory = button.dataset.filter;
+      let visibleCount = 0;
+
+      filterButtons.forEach((item) => {
+        item.setAttribute(
+          "aria-pressed",
+          String(item.dataset.filter === selectedCategory),
+        );
+      });
+
+      noteItems.forEach((item) => {
+        const isVisible =
+          selectedCategory === "all" ||
+          item.dataset.noteCategory === selectedCategory;
+        item.hidden = !isVisible;
+        if (isVisible) visibleCount += 1;
+      });
+
+      if (emptyState) emptyState.hidden = visibleCount !== 0;
+      if (filterStatus) {
+        const categoryLabel = button.textContent?.trim() ?? "Note";
+        filterStatus.textContent = `${categoryLabel}のNoteを${visibleCount}件表示しています。`;
+      }
+    });
+  });
+</script>
+
+<style>
+  .notes-page {
+    width: var(--container);
+    min-height: 100lvh;
+    margin-inline: auto;
+    color: var(--color-text);
+  }
+
+  .heading-row h1,
+  .section-heading h2 {
+    font-family: var(--font-kiyosuna-sans);
+  }
+
+  .heading-row h1 {
+    padding-bottom: 4px;
+    margin-bottom: 16px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-empress-dark-2);
+  }
+
+  .archive {
+    padding-bottom: 72px;
+  }
+
+  .section-heading {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-dessert-dark-2);
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--color-empress-dark-2);
+    }
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 18px;
+    padding-block: 18px 16px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .filter-button {
+    position: relative;
+    flex: none;
+    padding: 0 0 5px;
+    font-family: var(--font-suse-mono);
+    font-size: 0.75rem;
+    color: var(--color-empress-light-1);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+
+    &::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 1px;
+      content: "";
+      background: currentcolor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s ease-out;
+    }
+
+    &:is(:hover, :focus-visible),
+    &[aria-pressed="true"] {
+      color: var(--color-empress-dark-2);
+    }
+
+    &[aria-pressed="true"]::after {
+      transform: scaleX(1);
+    }
+  }
+
+  .note-list {
+    border-top: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .empty-state {
+    padding: 64px 24px;
+    color: var(--color-empress-dark-1);
+    text-align: center;
+    border-top: 1px solid var(--color-dessert-dark-2);
+    border-bottom: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
+    clip-path: inset(50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .filter-button::after {
+      transition: none;
+    }
+  }
+
+  @media (width >= 680px) {
+    .filter-row {
+      gap: 24px;
+    }
+  }
+
+  @media (width >= 768px) {
+    .heading-row h1 {
+      font-size: 3rem;
+    }
+
+    .archive {
+      padding-bottom: 96px;
+    }
+
+    .filter-button {
+      font-size: 0.9rem;
+    }
+  }
+</style>

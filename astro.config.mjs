@@ -6,6 +6,12 @@ import icon from "astro-icon";
 export default defineConfig({
   site: "https://sakanana.me",
 
+  markdown: {
+    shikiConfig: {
+      theme: "github-light",
+    },
+  },
+
   image: {
     layout: "constrained",
     responsiveStyles: true,
