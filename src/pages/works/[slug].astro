@@ -142,7 +142,7 @@ const platformLabels = {
             <dl class="development-meta">
               {data.details.platforms.length > 0 && (
                 <div>
-                  <dt>Platforms</dt>
+                  <dt>プラットフォーム</dt>
                   <dd>
                     {data.details.platforms
                       .map((platform) => platformLabels[platform])
@@ -152,7 +152,7 @@ const platformLabels = {
               )}
               {data.details.stacks.length > 0 && (
                 <div>
-                  <dt>Stacks</dt>
+                  <dt>技術スタック</dt>
                   <dd>{data.details.stacks.join(", ")}</dd>
                 </div>
               )}
@@ -163,7 +163,7 @@ const platformLabels = {
         {
           data.links.length > 0 && (
             <div class="work-links">
-              <h2>Links</h2>
+              <h2>リンク</h2>
               <ul>
                 {data.links.map((link) => (
                   <li>
@@ -318,7 +318,7 @@ const platformLabels = {
     grid-area: meta;
     min-width: 0;
     margin-top: 48px;
-    font-size: 0.82rem;
+    font-size: 0.875rem;
     color: var(--color-empress-dark-1);
 
     dl {
@@ -333,7 +333,6 @@ const platformLabels = {
 
     dt {
       margin-bottom: 2px;
-      font-family: var(--font-suse-mono);
       font-size: 0.64rem;
       color: var(--color-empress-base);
       text-transform: uppercase;
@@ -358,8 +357,8 @@ const platformLabels = {
     max-width: 760px;
     padding: 0;
     margin: 16px 0 0;
-    font-family: var(--font-suse-mono);
-    font-size: 0.66rem;
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 0.75rem;
     color: var(--color-empress-base);
     list-style: none;
 
@@ -373,7 +372,6 @@ const platformLabels = {
 
     h2 {
       margin-bottom: 8px;
-      font-family: var(--font-suse-mono);
       font-size: 0.64rem;
       font-weight: 300;
       color: var(--color-empress-base);
@@ -417,7 +415,7 @@ const platformLabels = {
     display: grid;
     gap: 32px;
     padding-top: 32px;
-    margin-top: 64px;
+    margin-top: 16px;
     border-top: 1px solid var(--color-dessert-dark-2);
 
     a {
@@ -521,14 +519,18 @@ const platformLabels = {
       grid-template-columns: 1fr;
     }
 
-    .work-navigation a {
-      &.older-work {
-        span {
-          justify-content: end;
-        }
+    .work-navigation {
+      margin-top: 32px;
 
-        strong {
-          text-align: end;
+      a {
+        &.older-work {
+          span {
+            justify-content: end;
+          }
+
+          strong {
+            text-align: end;
+          }
         }
       }
     }
