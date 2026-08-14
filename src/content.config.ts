@@ -1,16 +1,45 @@
+import { existsSync } from "node:fs";
+
 import { defineCollection } from "astro/content/config";
 import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { reference } from "astro:content";
 
+const workEntryBySlug = new Map<string, string>();
+const workSlugByEntry = new Map<string, string>();
+
 const work = defineCollection({
   loader: glob({
     pattern: "**/[^_]*.{md,mdx}",
     base: "./src/content/works",
-    generateId: ({ data, entry }) => {
+    generateId: ({ base, data, entry }) => {
       if (typeof data.slug !== "string") {
         throw new Error(`Work entry ${entry} requires a slug`);
       }
+
+      const previousSlug = workSlugByEntry.get(entry);
+      if (
+        previousSlug !== undefined &&
+        previousSlug !== data.slug &&
+        workEntryBySlug.get(previousSlug) === entry
+      ) {
+        workEntryBySlug.delete(previousSlug);
+      }
+
+      const existingEntry = workEntryBySlug.get(data.slug);
+      if (existingEntry !== undefined && existingEntry !== entry) {
+        const existingFile = new URL(encodeURI(existingEntry), base);
+        if (existsSync(existingFile)) {
+          throw new Error(
+            `Duplicate work slug "${data.slug}" in ${existingEntry} and ${entry}`,
+          );
+        }
+
+        workSlugByEntry.delete(existingEntry);
+      }
+
+      workEntryBySlug.set(data.slug, entry);
+      workSlugByEntry.set(entry, data.slug);
 
       return data.slug;
     },
