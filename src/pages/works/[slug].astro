@@ -283,6 +283,7 @@ const platformLabels = {
   .work-primary {
     grid-area: primary;
     min-width: 0;
+    max-width: 840px;
   }
 
   .work-meta {
@@ -441,7 +442,7 @@ const platformLabels = {
   @media (width >= 960px) {
     .detail-layout {
       grid-template-areas: "primary meta";
-      grid-template-columns: minmax(0, 1fr) 280px;
+      grid-template-columns: minmax(0, 840px) minmax(280px, 1fr);
       gap: 48px;
     }
 
