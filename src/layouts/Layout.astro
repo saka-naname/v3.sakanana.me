@@ -10,13 +10,22 @@ interface Props {
   headerVariant?: "default" | "top";
   title?: string;
   description?: string;
+  canonical?: string | URL;
+  openGraphImage?: string | URL;
+  openGraphType?: "website" | "article";
 }
 
 const {
   headerVariant = "default",
   title = "sakanana.me",
   description = "sakanana.me — 制作物や日々の記録をまとめています。",
+  canonical,
+  openGraphImage,
+  openGraphType = "website",
 } = Astro.props;
+
+const canonicalUrl = canonical ? String(canonical) : undefined;
+const openGraphImageUrl = openGraphImage ? String(openGraphImage) : undefined;
 ---
 
 <!doctype html>
@@ -28,6 +37,20 @@ const {
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={openGraphType} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    {
+      openGraphImageUrl && (
+        <meta property="og:image" content={openGraphImageUrl} />
+      )
+    }
+    <meta
+      name="twitter:card"
+      content={openGraphImageUrl ? "summary_large_image" : "summary"}
+    />
     <title>{title}</title>
     <Font cssVariable="--font-zen-kaku-gothic-antique" />
     <Font cssVariable="--font-suse-mono" />

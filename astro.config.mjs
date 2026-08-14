@@ -1,8 +1,16 @@
 // @ts-check
+import mdx from "@astrojs/mdx";
 import { defineConfig, fontProviders } from "astro/config";
 import icon from "astro-icon";
 
 export default defineConfig({
+  site: "https://sakanana.me",
+
+  image: {
+    layout: "constrained",
+    responsiveStyles: true,
+  },
+
   fonts: [
     {
       provider: fontProviders.local(),
@@ -38,5 +46,5 @@ export default defineConfig({
     },
   ],
 
-  integrations: [icon()],
+  integrations: [icon(), mdx()],
 });

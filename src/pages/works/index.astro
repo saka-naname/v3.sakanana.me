@@ -11,16 +11,22 @@ import Layout from "../../layouts/Layout.astro";
 
 const kindOrder = ["development", "illustration", "music", "other"] as const;
 
-const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
-);
-const workById = new Map(works.map((work) => [work.id, work]));
+const allWorks = await getCollection("work");
+const works = allWorks
+  .filter(({ data }) => !data.draft)
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+const workById = new Map(allWorks.map((work) => [work.id, work]));
 const [worksCuration] = await getCollection("worksCuration");
 const featuredWorks = (worksCuration?.data.featured ?? [])
-  .flatMap(({ id }) => {
+  .map(({ id }) => {
     const work = workById.get(id);
-    return work ? [work] : [];
+    if (!work) {
+      throw new Error(`Featured work not found: ${id}`);
+    }
+
+    return work;
   })
+  .filter(({ data }) => !data.draft)
   .slice(0, 4);
 const featuredGhosts = Array.from({
   length: Math.max(0, 4 - featuredWorks.length),
@@ -315,7 +321,7 @@ const availableKinds = kindOrder.filter((kind) =>
 
   .heading-row h1 {
     padding-bottom: 4px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     font-family: var(--font-kiyosuna-sans);
     font-size: 2.5rem;
     font-weight: 700;
