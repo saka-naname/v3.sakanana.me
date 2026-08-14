@@ -96,22 +96,18 @@ const platformLabels = {
   <main class="work-detail">
     <a class="back-link" href="/works/">← Works</a>
 
-    <header class="work-header">
-      <div class="work-labels">
-        <span class="kind-label">{kindLabels[data.kind]}</span>
-        {data.status === "wip" && <span class="status-label">WIP</span>}
-      </div>
-      <h1>{data.title}</h1>
-      <p>{data.summary}</p>
-    </header>
-
     <div class="detail-layout">
-      <div class="work-primary">
-        <WorkGallery images={data.images} title={data.title} />
+      <header class="work-header">
+        <div class="work-labels">
+          <span class="kind-label">{kindLabels[data.kind]}</span>
+          {data.status === "wip" && <span class="status-label">WIP</span>}
+        </div>
+        <h1>{data.title}</h1>
+        <p>{data.summary}</p>
+      </header>
 
-        <article class="work-body">
-          <Content components={{ VideoEmbed }} />
-        </article>
+      <div class="work-gallery">
+        <WorkGallery images={data.images} title={data.title} />
       </div>
 
       <aside class="work-meta" aria-label="作品情報">
@@ -184,6 +180,10 @@ const platformLabels = {
           )
         }
       </aside>
+
+      <article class="work-body">
+        <Content components={{ VideoEmbed }} />
+      </article>
     </div>
 
     {
@@ -230,10 +230,15 @@ const platformLabels = {
   }
 
   .work-header {
-    max-width: 760px;
-    margin-top: 24px;
+    display: contents;
+
+    h1,
+    > p {
+      max-width: 760px;
+    }
 
     h1 {
+      grid-area: title;
       margin-top: 12px;
       font-family: var(--font-kiyosuna-sans);
       font-size: clamp(2rem, 6vw, 3.5rem);
@@ -244,7 +249,8 @@ const platformLabels = {
     }
 
     > p {
-      margin-top: 12px;
+      grid-area: summary;
+      margin-top: 24px;
       font-size: clamp(0.95rem, 2vw, 1.15rem);
       line-height: 1.8;
       color: var(--color-empress-dark-1);
@@ -253,8 +259,10 @@ const platformLabels = {
 
   .work-labels {
     display: flex;
+    grid-area: labels;
     gap: 12px;
     align-items: center;
+    max-width: 760px;
     font-family: var(--font-suse-mono);
     font-size: 0.68rem;
     text-transform: uppercase;
@@ -274,21 +282,26 @@ const platformLabels = {
   .detail-layout {
     display: grid;
     grid-template-areas:
+      "labels"
+      "title"
+      "gallery"
+      "summary"
       "meta"
-      "primary";
-    gap: 32px;
-    margin-top: 48px;
+      "body";
+    margin-top: 24px;
   }
 
-  .work-primary {
-    grid-area: primary;
+  .work-gallery {
+    grid-area: gallery;
     min-width: 0;
     max-width: 840px;
+    margin-top: 32px;
   }
 
   .work-meta {
     grid-area: meta;
     min-width: 0;
+    margin-top: 48px;
     font-size: 0.82rem;
     color: var(--color-empress-dark-1);
 
@@ -374,10 +387,14 @@ const platformLabels = {
   }
 
   .work-body {
-    margin-top: 48px;
+    grid-area: body;
+    max-width: 840px;
+    padding-top: 32px;
+    margin-top: 32px;
     font-size: 0.94rem;
     line-height: 1.9;
     color: var(--color-text);
+    border-top: 1px solid var(--color-dessert-dark-2);
   }
 
   .work-navigation {
@@ -427,7 +444,31 @@ const platformLabels = {
     }
 
     .detail-layout {
+      grid-template-areas:
+        "labels"
+        "title"
+        "summary"
+        "meta"
+        "gallery"
+        "body";
+    }
+
+    .work-header > p {
+      margin-top: 12px;
+    }
+
+    .work-meta {
       margin-top: 64px;
+    }
+
+    .work-gallery {
+      margin-top: 32px;
+    }
+
+    .work-body {
+      padding-top: 0;
+      margin-top: 48px;
+      border-top: 0;
     }
 
     .work-navigation {
@@ -441,9 +482,18 @@ const platformLabels = {
 
   @media (width >= 960px) {
     .detail-layout {
-      grid-template-areas: "primary meta";
+      grid-template-areas:
+        "labels labels"
+        "title title"
+        "summary summary"
+        "gallery meta"
+        "body meta";
       grid-template-columns: minmax(0, 840px) minmax(280px, 1fr);
-      gap: 48px;
+      column-gap: 48px;
+    }
+
+    .work-gallery {
+      margin-top: 64px;
     }
 
     .primary-meta {
