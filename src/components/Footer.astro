@@ -179,7 +179,7 @@ const isCurrentPage = (href: string) => pathname.startsWith(href);
 
   @media (width >= 768px) {
     .container {
-      padding-block: 80px;
+      padding-block: 64px;
     }
 
     .primary-row,
@@ -218,6 +218,11 @@ const isCurrentPage = (href: string) => pathname.startsWith(href);
 
     .social-links {
       justify-content: flex-start;
+    }
+
+    .navigation a,
+    .social-links a {
+      min-height: 36px;
     }
   }
 
