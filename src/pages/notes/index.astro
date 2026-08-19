@@ -11,8 +11,9 @@ import {
 } from "../../components/notes/note";
 import NoteListItem from "../../components/notes/NoteListItem.astro";
 import Layout from "../../layouts/Layout.astro";
+import { isPublicContentEntry } from "../../utils/content";
 
-const notes = (await getCollection("note", ({ data }) => !data.draft)).sort(
+const notes = (await getCollection("note", isPublicContentEntry)).sort(
   compareNotesByPublishedAt,
 );
 const availableCategories = noteCategoryOrder.filter((category) =>
