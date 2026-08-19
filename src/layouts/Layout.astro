@@ -25,7 +25,9 @@ const {
   openGraphType = "website",
 } = Astro.props;
 
-const canonicalUrl = canonical ? String(canonical) : undefined;
+const canonicalUrl = String(
+  canonical ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url),
+);
 const openGraphImageUrl = openGraphImage ? String(openGraphImage) : undefined;
 ---
 
@@ -38,11 +40,11 @@ const openGraphImageUrl = openGraphImage ? String(openGraphImage) : undefined;
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={openGraphType} />
-    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:url" content={canonicalUrl} />
     {
       openGraphImageUrl && (
         <meta property="og:image" content={openGraphImageUrl} />
