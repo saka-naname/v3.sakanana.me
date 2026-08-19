@@ -1,28 +1,27 @@
 import type { APIRoute } from "astro";
 
-const getRobotsTxt = (sitemapUrl: URL) => `User-agent: *
+const getRobotsTxt = (
+  sitemapUrl: URL,
+) => `# Search indexing and user-initiated retrieval are permitted.
+# Crawling for AI/ML training, dataset creation, or bulk content
+# aggregation is not permitted.
+
+User-agent: *
 Allow: /
 
-# Model training and improvement
+# AI/ML training / dataset / bulk content aggregation
 User-agent: GPTBot
-Disallow: /
-
 User-agent: ClaudeBot
-Disallow: /
-
 User-agent: Google-Extended
+User-Agent: meta-externalagent
+User-agent: CCBot
+User-agent: Diffbot
 Disallow: /
 
-# AI search and user-directed retrieval
+# User-initiated search / retrieval
 User-agent: OAI-SearchBot
-Allow: /
-
 User-agent: ChatGPT-User
-Allow: /
-
 User-agent: Claude-SearchBot
-Allow: /
-
 User-agent: Claude-User
 Allow: /
 
