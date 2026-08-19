@@ -187,23 +187,6 @@ const showUpdatedAt =
       heading.prepend(anchor);
     });
 
-  const writeToClipboard = async (text: string) => {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.setAttribute("readonly", "");
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.append(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    textarea.remove();
-  };
-
   noteBody?.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
     const code = pre.querySelector("code");
     if (!code || pre.querySelector(".code-copy-button")) return;
@@ -216,7 +199,7 @@ const showUpdatedAt =
     let resetTimer: number | undefined;
     button.addEventListener("click", async () => {
       try {
-        await writeToClipboard(code.textContent ?? "");
+        await navigator.clipboard.writeText(code.textContent ?? "");
         button.dataset.copied = "true";
         button.setAttribute("aria-label", "コピーしました");
         if (copyStatus) copyStatus.textContent = "コードをコピーしました。";
