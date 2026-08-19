@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
+    "@astrojs/sitemap": "^3.7.3",
     "@iconify-json/hugeicons": "^1.2.31",
     "astro": "^7.1.4",
     "astro-icon": "^1.1.5",
