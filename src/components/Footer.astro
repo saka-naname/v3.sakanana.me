@@ -111,14 +111,26 @@ const isCurrentPage = (href: string) => pathname.startsWith(href);
 
   .navigation a,
   .social-links a {
+    position: relative;
     min-height: 44px;
     font-family: var(--font-zen-kaku-gothic-antique);
     text-decoration: none;
-    text-underline-offset: 0.2em;
 
-    &:is(:hover, :focus-visible) {
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
+    &::after {
+      position: absolute;
+      right: 0;
+      bottom: 6px;
+      left: 0;
+      height: 1px;
+      content: "";
+      background-color: currentcolor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    &:is(:hover, :focus-visible)::after {
+      transform: scaleX(1);
     }
   }
 
@@ -199,6 +211,11 @@ const isCurrentPage = (href: string) => pathname.startsWith(href);
       line-height: 1;
     }
 
+    .navigation a::after {
+      top: 1.2em;
+      bottom: auto;
+    }
+
     .social-links {
       justify-content: flex-start;
     }
@@ -207,6 +224,11 @@ const isCurrentPage = (href: string) => pathname.startsWith(href);
   @media (prefers-reduced-motion: reduce) {
     .logo {
       transition: none;
+    }
+
+    .navigation a::after,
+    .social-links a::after {
+      transition-duration: 0.01ms;
     }
   }
 </style>
