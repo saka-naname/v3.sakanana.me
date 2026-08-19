@@ -2,14 +2,58 @@
 import "../styles/globals.css";
 
 import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
 
 import heroImage from "../assets/img/0004.png";
+import avatarImage from "../assets/img/avatar.webp";
+import { compareNotesByPublishedAt } from "../components/notes/note";
+import NoteListItem from "../components/notes/NoteListItem.astro";
+import HomeWorkCard from "../components/works/HomeWorkCard.astro";
 import Layout from "../layouts/Layout.astro";
+import { isPublicContentEntry } from "../utils/content";
+
+const socialLinks: Array<{ label: string; href: string; icon: string }> = [
+  {
+    label: "GitHub プロフィールを見る",
+    href: "https://github.com/saka-naname",
+    icon: "hugeicons:github-01",
+  },
+  {
+    label: "Bluesky プロフィールを見る",
+    href: "https://bsky.app/profile/sakanana.me",
+    icon: "hugeicons:bluesky",
+  },
+  {
+    label: "X プロフィールを見る",
+    href: "https://x.com/sakanana_me",
+    icon: "hugeicons:new-twitter",
+  },
+];
+
+const allWorks = await getCollection("work");
+const workById = new Map(allWorks.map((work) => [work.id, work]));
+const [worksCuration] = await getCollection("worksCuration");
+const featuredWorks = (worksCuration?.data.featured ?? [])
+  .map(({ id }) => {
+    const work = workById.get(id);
+    if (!work) {
+      throw new Error(`Featured work not found: ${id}`);
+    }
+
+    return work;
+  })
+  .filter(isPublicContentEntry)
+  .slice(0, 4);
+
+const latestNotes = (await getCollection("note", isPublicContentEntry))
+  .sort(compareNotesByPublishedAt)
+  .slice(0, 3);
 ---
 
 <Layout headerVariant="top">
   <main>
-    <section id="hero">
+    <section id="hero" aria-label="メインビジュアル">
       <Image
         src={heroImage}
         alt="コーヒーを淹れる代理のイラスト"
@@ -19,39 +63,189 @@ import Layout from "../layouts/Layout.astro";
         fetchpriority="high"
       />
     </section>
+
+    <div class="home-content">
+      <section class="home-section about-section" aria-labelledby="about-title">
+        <div class="container">
+          <div class="section-heading">
+            <h2 id="about-title">ABOUT</h2>
+            <a href="/about/">VIEW ABOUT</a>
+          </div>
+
+          <div class="about-layout">
+            <div class="about-avatar">
+              <Image
+                src={avatarImage}
+                alt="アイコン"
+                widths={[128, 160, 256, 320]}
+                sizes="(min-width: 768px) 160px, 128px"
+                loading="lazy"
+                layout="none"
+              />
+            </div>
+
+            <div class="about-copy">
+              <h3>さか<span>saka-naname</span></h3>
+              <p>学生ソフトウェアエンジニア。</p>
+              <p>趣味としてお絵描きやDTM等の創作活動も嗜んでいます。</p>
+
+              <ul class="social-links">
+                {
+                  socialLinks.map(({ label, href, icon }) => (
+                    <li>
+                      <a href={href} aria-label={label}>
+                        <Icon name={icon} aria-hidden="true" />
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section works-section" aria-labelledby="works-title">
+        <div class="container">
+          <div class="section-heading">
+            <h2 id="works-title">WORKS</h2>
+            <a href="/works/">VIEW ALL WORKS</a>
+          </div>
+
+          <div
+            class="home-works-viewport"
+            data-home-works-carousel
+            role="region"
+            aria-roledescription="カルーセル"
+            aria-label="注目作品"
+            tabindex="0"
+          >
+            <div class="home-work-list">
+              {
+                featuredWorks.map((work, index) => (
+                  <HomeWorkCard
+                    work={work}
+                    slideIndex={index}
+                    slideCount={featuredWorks.length}
+                  />
+                ))
+              }
+            </div>
+          </div>
+
+          <div
+            class="carousel-indicators"
+            role="group"
+            aria-label="表示する注目作品を選択"
+          >
+            {
+              featuredWorks.map((work, index) => (
+                <button
+                  type="button"
+                  data-home-carousel-indicator
+                  aria-label={`${index + 1}件目、${work.data.title}を表示`}
+                  aria-current={index === 0 ? "true" : undefined}
+                />
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section notes-section" aria-labelledby="notes-title">
+        <div class="container">
+          <div class="section-heading notes-heading">
+            <h2 id="notes-title">NOTES</h2>
+            <a href="/notes/">VIEW ALL NOTES</a>
+          </div>
+
+          <div class="note-list">
+            {
+              latestNotes.map((note) => (
+                <NoteListItem note={note} variant="compact" />
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 </Layout>
+
+<script>
+  import EmblaCarousel from "embla-carousel";
+
+  const carousel = document.querySelector<HTMLElement>(
+    "[data-home-works-carousel]",
+  );
+  const indicators = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(
+      "[data-home-carousel-indicator]",
+    ),
+  );
+
+  if (carousel && indicators.length > 0) {
+    const desktopLayout = window.matchMedia("(min-width: 680px)");
+    const embla = EmblaCarousel(carousel, {
+      align: "start",
+      loop: true,
+      slides: "[data-home-work-slide]",
+      duration: 25,
+      breakpoints: {
+        "(min-width: 680px)": { active: false },
+        "(prefers-reduced-motion: reduce)": { duration: 0 },
+      },
+    });
+
+    carousel.dataset.carouselReady = "true";
+
+    const updateCarouselMode = () => {
+      if (desktopLayout.matches) {
+        carousel.removeAttribute("aria-roledescription");
+        carousel.removeAttribute("tabindex");
+      } else {
+        carousel.setAttribute("aria-roledescription", "カルーセル");
+        carousel.setAttribute("tabindex", "0");
+      }
+    };
+
+    const updateIndicators = () => {
+      const selectedIndex = embla.selectedScrollSnap();
+      indicators.forEach((indicator, index) => {
+        if (index === selectedIndex) {
+          indicator.setAttribute("aria-current", "true");
+        } else {
+          indicator.removeAttribute("aria-current");
+        }
+      });
+    };
+
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener("click", () => embla.scrollTo(index));
+    });
+
+    carousel.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        embla.scrollPrev();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        embla.scrollNext();
+      }
+    });
+
+    embla.on("select", updateIndicators).on("reInit", updateIndicators);
+    desktopLayout.addEventListener("change", updateCarouselMode);
+    updateCarouselMode();
+    updateIndicators();
+  }
+</script>
 
 <style>
   main {
     width: 100%;
     min-height: 100lvh;
-  }
-
-  section {
-    width: 100%;
-    padding-block: 1rem;
-
-    .container {
-      width: var(--container);
-      margin-inline: auto;
-    }
-  }
-
-  .coming-soon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 24rem;
-    border: 2px solid var(--color-empress-dark-2);
-    border-style: dashed;
-
-    span {
-      font-family: var(--font-kiyosuna-sans);
-      font-size: 2rem;
-      font-weight: 300;
-    }
   }
 
   #hero {
@@ -70,14 +264,235 @@ import Layout from "../layouts/Layout.astro";
     object-position: 30% 35%;
   }
 
-  .title {
-    margin-bottom: 1rem;
-    font-family: var(--font-kiyosuna-sans);
-    font-size: 2rem;
+  .home-content {
     color: var(--color-text);
+    background: var(--color-background);
   }
 
-  #highlights {
+  .home-section {
+    padding-block: clamp(80px, 8vw, 120px);
+
+    + .home-section {
+      padding-top: 0;
+    }
+  }
+
+  .container {
+    width: var(--container);
     margin-inline: auto;
+  }
+
+  .section-heading {
+    display: flex;
+    gap: 24px;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    margin-bottom: clamp(32px, 4vw, 48px);
+    border-bottom: 1px solid var(--color-dessert-dark-2);
+
+    h2,
+    a {
+      font-family: var(--font-kiyosuna-sans);
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--color-empress-dark-2);
+    }
+
+    a {
+      flex: none;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--color-empress-base);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      text-underline-offset: 0.18em;
+
+      &:is(:hover, :focus-visible) {
+        color: var(--color-text);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+      }
+    }
+  }
+
+  .about-layout {
+    display: grid;
+    gap: 32px;
+    max-width: 840px;
+    margin-inline: auto;
+  }
+
+  .about-avatar {
+    text-align: center;
+
+    img {
+      display: inline-block;
+      width: 128px;
+      height: 128px;
+      object-fit: cover;
+      border: 2px solid var(--color-dessert-dark-2);
+      border-radius: 50%;
+    }
+  }
+
+  .about-copy {
+    color: var(--color-empress-dark-2);
+
+    h3 {
+      margin-bottom: 10px;
+      font-family: var(--font-kiyosuna-sans);
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1.25;
+
+      span {
+        margin-left: 0.5rem;
+        font-family: var(--font-kiyosuna-sans);
+        font-size: 0.6em;
+        color: var(--color-empress-dark-1);
+      }
+    }
+
+    p {
+      line-height: 1.8;
+    }
+  }
+
+  .social-links {
+    display: flex;
+    gap: 16px;
+    margin-top: 18px;
+    list-style: none;
+
+    a {
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      color: var(--color-empress-light-1);
+
+      &:is(:hover, :focus-visible) {
+        color: var(--color-text);
+      }
+    }
+  }
+
+  .home-works-viewport {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &[data-carousel-ready="true"] {
+      overflow: hidden;
+      scroll-behavior: auto;
+      scroll-snap-type: none;
+    }
+  }
+
+  .home-work-list {
+    display: flex;
+    gap: 16px;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .carousel-indicators {
+    display: none;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+
+    button {
+      width: 9px;
+      height: 9px;
+      padding: 0;
+      cursor: pointer;
+      background: var(--color-dessert-dark-3);
+      border: 0;
+      border-radius: 50%;
+      transition:
+        background-color 0.2s ease-out,
+        transform 0.2s ease-out;
+
+      &[aria-current="true"] {
+        background: var(--color-empress-dark-2);
+        transform: scale(1.25);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-empress-dark-2);
+        outline-offset: 4px;
+      }
+    }
+  }
+
+  .home-works-viewport[data-carousel-ready="true"] + .carousel-indicators {
+    display: flex;
+  }
+
+  .notes-heading {
+    margin-bottom: 0;
+  }
+
+  @media (width >= 680px) {
+    .home-works-viewport,
+    .home-works-viewport[data-carousel-ready="true"] {
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+
+    .home-work-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 48px 24px;
+      touch-action: auto;
+    }
+
+    .home-works-viewport[data-carousel-ready="true"] + .carousel-indicators {
+      display: none;
+    }
+  }
+
+  @media (width >= 768px) {
+    .about-layout {
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 48px;
+      align-items: center;
+    }
+
+    .about-avatar {
+      text-align: start;
+
+      img {
+        width: 160px;
+        height: 160px;
+      }
+    }
+  }
+
+  @media (width >= 960px) {
+    .home-work-list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 32px 24px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-works-viewport {
+      scroll-behavior: auto;
+    }
+
+    .carousel-indicators button {
+      transition: none;
+    }
   }
 </style>
