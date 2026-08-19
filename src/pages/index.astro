@@ -322,6 +322,7 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
   .about-layout {
     display: grid;
     gap: 32px;
+    width: fit-content;
     max-width: 840px;
     margin-inline: auto;
   }
@@ -467,6 +468,7 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
       grid-template-columns: 160px minmax(0, 1fr);
       gap: 48px;
       align-items: center;
+      padding-right: 24px;
     }
 
     .about-avatar {
