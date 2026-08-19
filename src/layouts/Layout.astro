@@ -4,6 +4,7 @@ import "../styles/globals.css";
 
 import { Font } from "astro:assets";
 
+import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 
 interface Props {
@@ -61,16 +62,34 @@ const openGraphImageUrl = openGraphImage ? String(openGraphImage) : undefined;
   </head>
   <body>
     <Header variant={headerVariant} />
-    <slot />
+    <div class="page-content">
+      <slot />
+    </div>
+    <Footer />
   </body>
 </html>
 
 <style>
   body {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    min-height: 100lvh;
     margin: 0;
     overflow-x: hidden;
     background-color: var(--color-background);
+  }
+
+  .page-content {
+    flex: 1 0 auto;
+    width: 100%;
+    padding-bottom: 72px;
+  }
+
+  @media (width >= 768px) {
+    .page-content {
+      padding-bottom: 96px;
+    }
   }
 </style>
 
