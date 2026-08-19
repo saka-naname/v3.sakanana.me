@@ -3,13 +3,17 @@ import { formatNoteDate, noteCategoryLabels, type NoteEntry } from "./note";
 
 interface Props {
   note: NoteEntry;
+  variant?: "default" | "compact";
 }
 
-const { note } = Astro.props;
+const { note, variant = "default" } = Astro.props;
 const { data } = note;
 ---
 
-<article class="note-list-item" data-note-category={data.category}>
+<article
+  class:list={["note-list-item", `variant-${variant}`]}
+  data-note-category={data.category}
+>
   <a href={`/notes/${data.slug}/`}>
     <div class="note-meta">
       <time datetime={data.publishedAt.toISOString()}>
@@ -86,6 +90,16 @@ const { data } = note;
     }
   }
 
+  .variant-compact {
+    > a {
+      padding-block: 24px;
+    }
+
+    .note-copy h3 {
+      font-size: clamp(1.2rem, 3vw, 1.45rem);
+    }
+  }
+
   .note-list-item a:is(:hover, :focus-visible) h3 {
     color: var(--color-text);
     text-decoration: underline;
@@ -108,6 +122,12 @@ const { data } = note;
 
     .note-copy p {
       font-size: 0.95rem;
+    }
+
+    .variant-compact > a {
+      grid-template-columns: 136px minmax(0, 1fr);
+      gap: 24px;
+      padding-block: 24px;
     }
   }
 </style>
