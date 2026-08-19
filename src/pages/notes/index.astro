@@ -36,13 +36,11 @@ const availableCategories = noteCategoryOrder.filter((category) =>
     </div>
 
     <section class="archive" aria-labelledby="archive-title">
-      <div class="section-heading">
+      <div class="section-heading archive-heading">
         <h2 id="archive-title">ALL NOTES</h2>
-      </div>
 
-      {
-        notes.length > 0 ? (
-          <>
+        {
+          notes.length > 0 && (
             <div
               class="filter-row"
               role="group"
@@ -67,7 +65,13 @@ const availableCategories = noteCategoryOrder.filter((category) =>
                 </button>
               ))}
             </div>
+          )
+        }
+      </div>
 
+      {
+        notes.length > 0 ? (
+          <>
             <div class="note-list" data-note-list>
               {notes.map((note) => (
                 <NoteListItem note={note} />
@@ -179,8 +183,7 @@ const availableCategories = noteCategoryOrder.filter((category) =>
   .filter-row {
     display: flex;
     gap: 18px;
-    padding-block: 18px 16px;
-    margin-bottom: 16px;
+    padding-top: 18px;
     overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: none;
@@ -226,15 +229,10 @@ const availableCategories = noteCategoryOrder.filter((category) =>
     }
   }
 
-  .note-list {
-    border-top: 1px solid var(--color-dessert-dark-2);
-  }
-
   .empty-state {
     padding: 64px 24px;
     color: var(--color-empress-dark-1);
     text-align: center;
-    border-top: 1px solid var(--color-dessert-dark-2);
     border-bottom: 1px solid var(--color-dessert-dark-2);
   }
 

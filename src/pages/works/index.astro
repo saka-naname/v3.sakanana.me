@@ -99,27 +99,27 @@ const availableKinds = kindOrder.filter((kind) =>
     <section class="archive" aria-labelledby="archive-title">
       <div class="section-heading archive-heading">
         <h2 id="archive-title">ALL WORKS</h2>
-      </div>
 
-      <div class="filter-row" role="group" aria-label="作品を種類で絞り込む">
-        <button
-          class="filter-button"
-          type="button"
-          data-filter="all"
-          aria-pressed="true">All</button
-        >
-        {
-          availableKinds.map((kind) => (
-            <button
-              class="filter-button"
-              type="button"
-              data-filter={kind}
-              aria-pressed="false"
-            >
-              {kindLabels[kind]}
-            </button>
-          ))
-        }
+        <div class="filter-row" role="group" aria-label="作品を種類で絞り込む">
+          <button
+            class="filter-button"
+            type="button"
+            data-filter="all"
+            aria-pressed="true">All</button
+          >
+          {
+            availableKinds.map((kind) => (
+              <button
+                class="filter-button"
+                type="button"
+                data-filter={kind}
+                aria-pressed="false"
+              >
+                {kindLabels[kind]}
+              </button>
+            ))
+          }
+        </div>
       </div>
 
       <div class="work-grid" data-work-grid>
@@ -415,14 +415,14 @@ const availableKinds = kindOrder.filter((kind) =>
   }
 
   .archive-heading {
-    margin-bottom: 0;
+    display: block;
+    margin-bottom: 32px;
   }
 
   .filter-row {
     display: flex;
     gap: 18px;
-    padding-block: 18px 16px;
-    margin-bottom: 32px;
+    padding-top: 18px;
     overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: none;
@@ -477,7 +477,6 @@ const availableKinds = kindOrder.filter((kind) =>
     padding: 64px 24px;
     color: var(--color-empress-dark-1);
     text-align: center;
-    border-top: 1px solid var(--color-dessert-dark-2);
     border-bottom: 1px solid var(--color-dessert-dark-2);
   }
 
