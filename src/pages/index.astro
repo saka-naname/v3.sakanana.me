@@ -10,26 +10,9 @@ import avatarImage from "../assets/img/avatar.webp";
 import { compareNotesByPublishedAt } from "../components/notes/note";
 import NoteListItem from "../components/notes/NoteListItem.astro";
 import HomeWorkCard from "../components/works/HomeWorkCard.astro";
+import { socialLinks } from "../data/site";
 import Layout from "../layouts/Layout.astro";
 import { isPublicContentEntry } from "../utils/content";
-
-const socialLinks: Array<{ label: string; href: string; icon: string }> = [
-  {
-    label: "GitHub プロフィールを見る",
-    href: "https://github.com/saka-naname",
-    icon: "hugeicons:github-01",
-  },
-  {
-    label: "Bluesky プロフィールを見る",
-    href: "https://bsky.app/profile/sakanana.me",
-    icon: "hugeicons:bluesky",
-  },
-  {
-    label: "X プロフィールを見る",
-    href: "https://x.com/sakanana_me",
-    icon: "hugeicons:new-twitter",
-  },
-];
 
 const allWorks = await getCollection("work");
 const workById = new Map(allWorks.map((work) => [work.id, work]));
@@ -91,9 +74,9 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
 
               <ul class="social-links">
                 {
-                  socialLinks.map(({ label, href, icon }) => (
+                  socialLinks.map(({ accessibleLabel, href, icon }) => (
                     <li>
-                      <a href={href} aria-label={label}>
+                      <a href={href} aria-label={accessibleLabel}>
                         <Icon name={icon} aria-hidden="true" />
                       </a>
                     </li>
@@ -245,7 +228,6 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
 <style>
   main {
     width: 100%;
-    min-height: 100lvh;
   }
 
   #hero {
@@ -442,6 +424,10 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
 
   .notes-heading {
     margin-bottom: 0;
+  }
+
+  .notes-section {
+    padding-bottom: 0;
   }
 
   @media (width >= 680px) {

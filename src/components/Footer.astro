@@ -1,0 +1,212 @@
+---
+import "../styles/globals.css";
+
+import { Icon } from "astro-icon/components";
+
+import { siteNavigation, socialLinks } from "../data/site";
+
+const pathname = Astro.url.pathname;
+const currentYear = new Date().getFullYear();
+const isCurrentPage = (href: string) => pathname.startsWith(href);
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="primary-row">
+      <a class="logo" href="/">sakanana.me</a>
+
+      <nav aria-label="フッターナビゲーション">
+        <ul class="navigation">
+          {
+            siteNavigation.map(({ label, href }) => (
+              <li>
+                <a
+                  href={href}
+                  aria-current={isCurrentPage(href) ? "page" : undefined}
+                >
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="secondary-row">
+      <ul class="social-links" aria-label="ソーシャルリンク">
+        {
+          socialLinks.map(({ label, accessibleLabel, href, icon }) => (
+            <li>
+              <a href={href} aria-label={accessibleLabel}>
+                <Icon name={icon} aria-hidden="true" />
+                <span>{label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <small>&copy; {currentYear} saka-naname</small>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    width: 100%;
+    color: var(--color-dessert-base);
+    background-color: var(--color-empress-dark-2);
+  }
+
+  .container {
+    width: var(--container);
+    padding-block: 56px;
+    margin-inline: auto;
+  }
+
+  .primary-row,
+  .secondary-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .primary-row {
+    gap: 32px;
+  }
+
+  .secondary-row {
+    gap: 24px;
+    margin-top: 48px;
+  }
+
+  .logo {
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-dessert-base);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: opacity 0.15s ease-out;
+
+    &:is(:hover, :focus-visible) {
+      opacity: 0.6;
+    }
+  }
+
+  .navigation,
+  .social-links {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .navigation {
+    gap: 24px;
+    justify-content: center;
+  }
+
+  .navigation a,
+  .social-links a {
+    min-height: 44px;
+    font-family: var(--font-zen-kaku-gothic-antique);
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+
+    &:is(:hover, :focus-visible) {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+    }
+  }
+
+  .navigation a {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--color-dessert-base);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .social-links {
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    justify-content: center;
+  }
+
+  .social-links a {
+    display: inline-flex;
+    gap: 0.45em;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--color-dessert-dark-2);
+
+    svg {
+      flex: none;
+      font-size: 1.25rem;
+    }
+
+    &:is(:hover, :focus-visible) {
+      color: var(--color-dessert-base);
+    }
+  }
+
+  small {
+    font-family: var(--font-zen-kaku-gothic-antique);
+    font-size: 0.8rem;
+    color: var(--color-dessert-dark-2);
+  }
+
+  :is(.logo, .navigation a, .social-links a):focus-visible {
+    outline: 2px solid var(--color-dessert-base);
+    outline-offset: 4px;
+  }
+
+  @media (width >= 768px) {
+    .container {
+      padding-block: 80px;
+    }
+
+    .primary-row,
+    .secondary-row {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .primary-row {
+      gap: 64px;
+    }
+
+    .secondary-row {
+      gap: 32px;
+      align-items: center;
+      margin-top: 64px;
+    }
+
+    .navigation {
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+      padding-top: 4px;
+    }
+
+    .navigation a {
+      align-items: flex-start;
+      line-height: 1;
+    }
+
+    .social-links {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo {
+      transition: none;
+    }
+  }
+</style>

@@ -3,6 +3,8 @@ import "../styles/globals.css";
 
 import { Icon } from "astro-icon/components";
 
+import { siteNavigation, socialLinks } from "../data/site";
+
 interface Props {
   variant?: "default" | "top";
 }
@@ -10,35 +12,11 @@ interface Props {
 const { variant = "default" } = Astro.props;
 const pathname = Astro.url.pathname;
 
-const navigation: Array<{ label: string; href: string }> = [
-  { label: "About", href: "/about/" },
-  { label: "Works", href: "/works/" },
-  { label: "Notes", href: "/notes/" },
-];
-
-const internalNavigation = navigation.filter(({ href }) =>
+const internalNavigation = siteNavigation.filter(({ href }) =>
   href.startsWith("/"),
 );
 const isCurrentPage = (href: string) =>
   href === "/" ? pathname === href : pathname.startsWith(href);
-
-const socialLinks = [
-  {
-    label: "GitHub プロフィールを見る",
-    href: "https://github.com/saka-naname",
-    icon: "hugeicons:github-01",
-  },
-  {
-    label: "Bluesky プロフィールを見る",
-    href: "https://bsky.app/profile/sakanana.me",
-    icon: "hugeicons:bluesky",
-  },
-  {
-    label: "X プロフィールを見る",
-    href: "https://x.com/sakanana_me",
-    icon: "hugeicons:new-twitter",
-  },
-];
 ---
 
 <header
@@ -69,9 +47,9 @@ const socialLinks = [
 
       <ul class="desktop-social-links" aria-label="ソーシャルリンク">
         {
-          socialLinks.map(({ label, href, icon }) => (
+          socialLinks.map(({ accessibleLabel, href, icon }) => (
             <li>
-              <a href={href} aria-label={label}>
+              <a href={href} aria-label={accessibleLabel}>
                 <Icon name={icon} aria-hidden="true" />
               </a>
             </li>
@@ -134,7 +112,7 @@ const socialLinks = [
       <nav aria-label="メインナビゲーション">
         <ul class="navigation">
           {
-            navigation.map(({ label, href }) => (
+            siteNavigation.map(({ label, href }) => (
               <li>
                 <a
                   href={href}
@@ -150,9 +128,9 @@ const socialLinks = [
 
       <ul class="social-links" aria-label="ソーシャルリンク">
         {
-          socialLinks.map(({ label, href, icon }) => (
+          socialLinks.map(({ accessibleLabel, href, icon }) => (
             <li>
-              <a href={href} aria-label={label}>
+              <a href={href} aria-label={accessibleLabel}>
                 <Icon name={icon} aria-hidden="true" />
               </a>
             </li>
