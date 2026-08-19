@@ -52,6 +52,10 @@ const openGraphImageUrl = openGraphImage ? String(openGraphImage) : undefined;
       content={openGraphImageUrl ? "summary_large_image" : "summary"}
     />
     <title>{title}</title>
+    <Font
+      cssVariable="--font-kiyosuna-sans"
+      preload={[{ weight: 300 }, { weight: 700 }]}
+    />
     <Font cssVariable="--font-zen-kaku-gothic-antique" />
     <Font cssVariable="--font-suse-mono" />
   </head>

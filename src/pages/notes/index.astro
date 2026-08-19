@@ -1,7 +1,6 @@
 ---
 import "../../styles/globals.css";
 
-import { Font } from "astro:assets";
 import { getCollection } from "astro:content";
 
 import {
@@ -20,12 +19,6 @@ const availableCategories = noteCategoryOrder.filter((category) =>
   notes.some(({ data }) => data.category === category),
 );
 ---
-
-<head>
-  <meta charset="utf-8" />
-  <Font cssVariable="--font-kiyosuna-sans" />
-  <Font cssVariable="--font-suse-mono" />
-</head>
 
 <Layout
   title="Notes | sakanana.me"

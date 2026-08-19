@@ -1,7 +1,6 @@
 ---
 import "../styles/globals.css";
 
-import { Font } from "astro:assets";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
@@ -26,11 +25,6 @@ const socialLinks: Array<{ label: string; href: string; icon: string }> = [
   },
 ];
 ---
-
-<head>
-  <meta charset="utf-8" />
-  <Font cssVariable="--font-kiyosuna-sans" />
-</head>
 
 <Layout title="About | sakanana.me" description="saka-naname のプロフィール">
   <main class="container">

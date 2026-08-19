@@ -1,7 +1,6 @@
 ---
 import "../../styles/globals.css";
 
-import { Font } from "astro:assets";
 import { getCollection } from "astro:content";
 
 import FeaturedWorkCard from "../../components/works/FeaturedWorkCard.astro";
@@ -36,12 +35,6 @@ const availableKinds = kindOrder.filter((kind) =>
   works.some(({ data }) => data.kind === kind),
 );
 ---
-
-<head>
-  <meta charset="utf-8" />
-  <Font cssVariable="--font-kiyosuna-sans" />
-  <Font cssVariable="--font-suse-mono" />
-</head>
 
 <Layout
   title="Works | sakanana.me"

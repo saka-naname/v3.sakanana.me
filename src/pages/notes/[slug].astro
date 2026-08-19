@@ -2,7 +2,6 @@
 import "../../styles/globals.css";
 
 import type { GetStaticPaths } from "astro";
-import { Font } from "astro:assets";
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
@@ -64,12 +63,6 @@ const showUpdatedAt =
   data.updatedAt &&
   formatNoteDate(data.updatedAt) !== formatNoteDate(data.publishedAt);
 ---
-
-<head>
-  <meta charset="utf-8" />
-  <Font cssVariable="--font-kiyosuna-sans" />
-  <Font cssVariable="--font-suse-mono" />
-</head>
 
 <Layout
   title={`${data.title} | Notes | sakanana.me`}

@@ -2,7 +2,7 @@
 import "../../styles/globals.css";
 
 import type { GetStaticPaths } from "astro";
-import { Font, getImage } from "astro:assets";
+import { getImage } from "astro:assets";
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
@@ -81,12 +81,6 @@ const platformLabels = {
   other: "Other",
 } as const;
 ---
-
-<head>
-  <meta charset="utf-8" />
-  <Font cssVariable="--font-kiyosuna-sans" />
-  <Font cssVariable="--font-suse-mono" />
-</head>
 
 <Layout
   title={`${data.title} | Works | sakanana.me`}

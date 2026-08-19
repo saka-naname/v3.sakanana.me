@@ -1,7 +1,6 @@
 ---
 import "../styles/globals.css";
 
-import { Font } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
 interface Props {
@@ -41,11 +40,6 @@ const socialLinks = [
   },
 ];
 ---
-
-<head>
-  <meta charset="utf-8" />
-  <Font cssVariable="--font-kiyosuna-sans" />
-</head>
 
 <header
   class:list={["header", "site-header", { "top-variant": variant === "top" }]}
@@ -345,6 +339,7 @@ const socialLinks = [
       display: inline-block;
       font-family: var(--font-kiyosuna-sans);
       font-size: 0.9rem;
+      font-weight: 300;
       color: var(--header-foreground, var(--color-empress-dark-2));
       text-transform: uppercase;
       letter-spacing: 0.12em;
@@ -517,6 +512,7 @@ const socialLinks = [
       padding: 0 0 0 12px;
       font-family: var(--font-kiyosuna-sans);
       font-size: 1.15rem;
+      font-weight: 300;
       color: var(--color-empress-light-1);
       text-transform: uppercase;
       letter-spacing: 0.18em;
