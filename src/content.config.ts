@@ -7,6 +7,8 @@ import { reference } from "astro:content";
 
 const workEntryBySlug = new Map<string, string>();
 const workSlugByEntry = new Map<string, string>();
+const noteEntryBySlug = new Map<string, string>();
+const noteSlugByEntry = new Map<string, string>();
 
 const work = defineCollection({
   loader: glob({
@@ -110,11 +112,51 @@ const work = defineCollection({
 });
 
 const note = defineCollection({
-  loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/notes" }),
+  loader: glob({
+    pattern: "**/[^_]*.{md,mdx}",
+    base: "./src/content/notes",
+    generateId: ({ base, data, entry }) => {
+      if (typeof data.slug !== "string") {
+        throw new Error(`Note entry ${entry} requires a slug`);
+      }
+
+      const previousSlug = noteSlugByEntry.get(entry);
+      if (
+        previousSlug !== undefined &&
+        previousSlug !== data.slug &&
+        noteEntryBySlug.get(previousSlug) === entry
+      ) {
+        noteEntryBySlug.delete(previousSlug);
+      }
+
+      const existingEntry = noteEntryBySlug.get(data.slug);
+      if (existingEntry !== undefined && existingEntry !== entry) {
+        const existingFile = new URL(encodeURI(existingEntry), base);
+        if (existsSync(existingFile)) {
+          throw new Error(
+            `Duplicate note slug "${data.slug}" in ${existingEntry} and ${entry}`,
+          );
+        }
+
+        noteSlugByEntry.delete(existingEntry);
+      }
+
+      noteEntryBySlug.set(data.slug, entry);
+      noteSlugByEntry.set(entry, data.slug);
+
+      return data.slug;
+    },
+  }),
   schema: ({ image }) =>
     z.object({
       title: z.string().min(1),
       summary: z.string().min(1),
+      slug: z
+        .string()
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          "slug must use lowercase ASCII kebab-case",
+        ),
 
       category: z.enum([
         "engineering",

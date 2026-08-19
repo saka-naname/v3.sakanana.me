@@ -1,0 +1,127 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+import { kindLabels } from "../works/work-card";
+
+interface Props {
+  work: CollectionEntry<"work">;
+}
+
+const { work } = Astro.props;
+const { data } = work;
+---
+
+<article class="related-work-card">
+  <a href={`/works/${data.slug}/`}>
+    <figure>
+      <Image
+        src={data.images[0].image}
+        alt={data.images[0].alt}
+        widths={[180, 280]}
+        sizes="(min-width: 680px) 140px, 104px"
+        loading="lazy"
+        layout="none"
+      />
+    </figure>
+
+    <div>
+      <span>{kindLabels[data.kind]}</span>
+      <h3>{data.title}</h3>
+      <p>{data.summary}</p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .related-work-card {
+    border-bottom: 1px solid var(--color-dessert-dark-2);
+
+    a {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      padding-block: 16px;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    figure {
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: var(--color-dessert-dark-1);
+      border: 1px solid var(--color-dessert-dark-2);
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    span {
+      font-family: var(--font-suse-mono);
+      font-size: 0.65rem;
+      color: var(--color-empress-base);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    h3 {
+      margin-top: 4px;
+      font-family: var(--font-kiyosuna-sans);
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--color-empress-dark-2);
+      text-underline-offset: 0.18em;
+    }
+
+    p {
+      display: -webkit-box;
+      margin-top: 5px;
+      overflow: hidden;
+      -webkit-line-clamp: 2;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--color-empress-dark-1);
+      -webkit-box-orient: vertical;
+    }
+  }
+
+  .related-work-card a:is(:hover, :focus-visible) h3 {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  @media (hover: hover) {
+    .related-work-card a:hover img {
+      transform: scale(1.018);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .related-work-card img {
+      transition: none;
+    }
+  }
+
+  @media (width >= 680px) {
+    .related-work-card a {
+      grid-template-columns: 140px minmax(0, 1fr);
+      gap: 20px;
+      padding-block: 20px;
+    }
+
+    .related-work-card h3 {
+      font-size: 1.2rem;
+    }
+
+    .related-work-card p {
+      font-size: 0.84rem;
+    }
+  }
+</style>

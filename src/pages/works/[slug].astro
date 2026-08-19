@@ -13,6 +13,7 @@ import {
 } from "../../components/works/work-card";
 import WorkGallery from "../../components/works/WorkGallery.astro";
 import Layout from "../../layouts/Layout.astro";
+import { isPublicContentEntry } from "../../utils/content";
 
 type WorkEntry = CollectionEntry<"work">;
 
@@ -23,7 +24,7 @@ interface Props {
 }
 
 export const getStaticPaths = (async () => {
-  const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
+  const works = (await getCollection("work", isPublicContentEntry)).sort(
     (a, b) =>
       b.data.publishedAt.getTime() - a.data.publishedAt.getTime() ||
       a.data.slug.localeCompare(b.data.slug),
