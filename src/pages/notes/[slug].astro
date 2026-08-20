@@ -420,6 +420,10 @@ const showUpdatedAt =
     margin-block: 0 22px;
   }
 
+  .note-body p:has(img) {
+    text-align: center;
+  }
+
   .note-body :is(h2, h3, h4) {
     position: relative;
     margin-block: 52px 18px;
@@ -521,7 +525,9 @@ const showUpdatedAt =
 
   .note-body img {
     height: auto;
+    max-height: 60svh;
     margin-block: 32px;
+    object-fit: contain;
   }
 
   .note-body figcaption {
@@ -654,6 +660,10 @@ const showUpdatedAt =
       padding-top: 48px;
       margin-top: 48px;
       font-size: 1.02rem;
+    }
+
+    .note-body img {
+      max-height: 570px;
     }
   }
 </style>
