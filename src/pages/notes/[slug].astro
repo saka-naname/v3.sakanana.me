@@ -479,6 +479,45 @@ const showUpdatedAt =
     border-left: 2px solid var(--color-dessert-dark-3);
   }
 
+  .note-body .callout {
+    --callout-accent: var(--color-empress-dark-1);
+
+    padding: 20px 22px;
+    margin-block: 28px;
+    background: color-mix(
+      in srgb,
+      var(--callout-accent) 7%,
+      var(--color-surface)
+    );
+    border: 1px solid color-mix(in srgb, var(--callout-accent) 38%, transparent);
+    border-left: 3px solid var(--callout-accent);
+  }
+
+  .note-body .callout-tip {
+    --callout-accent: #58735d;
+  }
+
+  .note-body .callout-warning {
+    --callout-accent: #8b672e;
+  }
+
+  .note-body .callout-danger {
+    --callout-accent: #92534f;
+  }
+
+  .note-body .callout-title {
+    margin-bottom: 8px;
+    font-family: var(--font-kiyosuna-sans);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--callout-accent);
+  }
+
+  .note-body .callout > :last-child {
+    margin-bottom: 0;
+  }
+
   .note-body img {
     height: auto;
     margin-block: 32px;
