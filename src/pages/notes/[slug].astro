@@ -2,6 +2,7 @@
 import "../../styles/globals.css";
 
 import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
@@ -111,7 +112,7 @@ const showUpdatedAt =
     </header>
 
     <article class="note-body" data-note-body>
-      <Content components={{ VideoEmbed }} />
+      <Content components={{ VideoEmbed, Image }} />
     </article>
 
     {
@@ -419,6 +420,10 @@ const showUpdatedAt =
     margin-block: 0 22px;
   }
 
+  .note-body p:has(img) {
+    text-align: center;
+  }
+
   .note-body :is(h2, h3, h4) {
     position: relative;
     margin-block: 52px 18px;
@@ -463,9 +468,25 @@ const showUpdatedAt =
     text-underline-offset: 0.2em;
   }
 
+  .note-body a:hover {
+    text-decoration: underline;
+  }
+
   .note-body :is(ul, ol) {
     padding-inline-start: 1.5em;
     margin-block: 0 22px;
+  }
+
+  .note-body ul {
+    list-style-type: disc;
+
+    ul {
+      list-style-type: circle;
+    }
+  }
+
+  .note-body ol {
+    list-style-type: decimal;
   }
 
   .note-body li + li {
@@ -520,7 +541,9 @@ const showUpdatedAt =
 
   .note-body img {
     height: auto;
+    max-height: 60svh;
     margin-block: 32px;
+    object-fit: contain;
   }
 
   .note-body figcaption {
@@ -636,6 +659,10 @@ const showUpdatedAt =
     border-top: 1px solid var(--color-dessert-dark-2);
   }
 
+  .note-body strong {
+    font-weight: 700;
+  }
+
   @media (hover: none), (pointer: coarse) {
     .note-body .code-copy-button {
       opacity: 1;
@@ -653,6 +680,10 @@ const showUpdatedAt =
       padding-top: 48px;
       margin-top: 48px;
       font-size: 1.02rem;
+    }
+
+    .note-body img {
+      max-height: 570px;
     }
   }
 </style>

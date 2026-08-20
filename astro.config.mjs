@@ -6,13 +6,17 @@ import { defineConfig, fontProviders } from "astro/config";
 import icon from "astro-icon";
 import remarkDirective from "remark-directive";
 
+import { rehypeExternalLinks } from "./src/plugins/rehypeExternalLinks.mjs";
 import { remarkCalloutDirectives } from "./src/plugins/remarkCallout.mjs";
 
+const site = "https://sakanana.me";
+
 export default defineConfig({
-  site: "https://sakanana.me",
+  site,
 
   markdown: {
     processor: unified({
+      rehypePlugins: [[rehypeExternalLinks, { site }]],
       remarkPlugins: [remarkDirective, remarkCalloutDirectives],
     }),
     shikiConfig: {
