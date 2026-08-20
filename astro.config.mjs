@@ -1,12 +1,20 @@
 // @ts-check
+import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import icon from "astro-icon";
+import remarkDirective from "remark-directive";
+
+import { remarkCalloutDirectives } from "./src/plugins/remarkCallout.mjs";
 
 export default defineConfig({
   site: "https://sakanana.me",
 
   markdown: {
+    processor: unified({
+      remarkPlugins: [remarkDirective, remarkCalloutDirectives],
+    }),
     shikiConfig: {
       theme: "github-light",
     },
@@ -52,5 +60,5 @@ export default defineConfig({
     },
   ],
 
-  integrations: [icon(), mdx()],
+  integrations: [icon(), mdx(), sitemap()],
 });
