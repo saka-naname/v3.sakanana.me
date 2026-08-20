@@ -1,0 +1,57 @@
+---
+title: Astroで小さなNotesを組み立てる
+summary: Content CollectionsとMDXを使い、短いメモから技術記事まで同じ仕組みで扱うための試作記録。
+slug: astro-content-notes
+category: engineering
+tags: [Astro, MDX, Content Collections]
+publishedAt: 2026-05-18
+updatedAt: 2026-05-24
+relatedWorks:
+  - komorebi-cli
+  - distant-room
+---
+
+> これはNotesページの表示確認用に作成したダミー記事です。内容は実在しそうな開発メモとして構成しています。
+
+短いメモと長い技術記事を別々の仕組みに分けると、書き始める前の判断が増えてしまいます。そこで、どちらも同じContent Collectionへ入れ、必要なときだけMDXを使う形を試しました。
+
+## コンテンツの境界を決める
+
+記事ごとの差は本文ではなくfrontmatterへ寄せます。一覧に必要なのはタイトル、概要、カテゴリー、公開日です。詳細ページでは、そこへ更新日や関連する制作物を加えます。
+
+```ts
+type Note = {
+  title: string;
+  summary: string;
+  slug: string;
+  category: "engineering" | "making" | "diary" | "memorandum" | "tips";
+  publishedAt: Date;
+  draft?: boolean;
+};
+```
+
+この程度の契約なら、数行のメモにも長い記事にも過剰ではありません。公開URLとファイル名を分離するため、`slug` は明示的に持たせています。
+
+### 一覧は文章から始める
+
+Notesのcoverは任意ですが、一覧では使いません。日付とカテゴリーを左へ、タイトルとsummaryを右へ置くことで、画像がなくても同じリズムで読み進められます。
+
+### 詳細は一つの読書カラムにする
+
+本文幅はコードブロックが窮屈にならず、通常の文章が長くなりすぎない範囲にします。補助情報をサイドバーへ分けず、タイトルから本文まで一つの流れにしました。
+
+## MDXが必要になる場面
+
+通常の文章、画像、コードはMarkdownで十分です。一方で、既存コンポーネントを使った埋め込みを記事へ置きたい場合はMDXが役立ちます。
+
+<VideoEmbed
+  provider="youtube"
+  id="M7lc1UVf-VE"
+  title="YouTube 埋め込み表示のデモ"
+/>
+
+このページでは、見出しアンカー、コードのシンタックスハイライト、コピーボタン、動画埋め込みをまとめて確認できます。
+
+## 小さく公開して育てる
+
+最初から検索やタグ別ページを作らず、カテゴリーの絞り込みと時系列だけを用意します。記事数が増えて探しづらさが実際に現れた段階で、必要な導線を追加する予定です。

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">灰色の午後 cover</title>
+  <rect width="1200" height="900" fill="#b7b7af"/>
+  <path d="M116 96h968v708H116z" fill="#e4e4df" stroke="#595153" stroke-width="6"/>
+  <path d="M600 96v708M116 450h968" stroke="#595153" stroke-width="6"/>
+  <path d="M116 520l484 284H116zM600 520l484 284H600z" fill="#d0d0ca"/>
+  <path d="M184 188h270M184 244h350M676 188h254M676 244h190" stroke="#999092" stroke-width="8"/>
+</svg>

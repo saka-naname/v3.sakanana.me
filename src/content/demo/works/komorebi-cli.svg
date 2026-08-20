@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">komorebi-cli cover</title>
+  <rect width="1200" height="900" fill="#f7f7f4"/>
+  <rect x="92" y="104" width="1016" height="692" fill="#595153"/>
+  <path d="M92 216h1016" stroke="#d0d0ca" stroke-width="4"/>
+  <path d="M164 310h178M164 382h492M164 454h388M164 598h670M164 670h540" stroke="#f7f7f4" stroke-width="12"/>
+  <path d="M762 254l346 0v342L890 494z" fill="#999092"/>
+  <path d="M164 310l44 36-44 36" fill="none" stroke="#d0d0ca" stroke-width="10"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">tsumugi cover</title>
+  <rect width="1200" height="900" fill="#e4e4df"/>
+  <rect x="96" y="88" width="1008" height="724" fill="#f7f7f4" stroke="#595153" stroke-width="5"/>
+  <path d="M238 250h328v380H238zM566 250h396v380H566" fill="none" stroke="#595153" stroke-width="8"/>
+  <path d="M566 250v380M282 334h222M282 388h222M282 442h170M628 334h270M628 388h218M628 442h270M628 496h180" fill="none" stroke="#999092" stroke-width="6"/>
+  <path d="M238 674h724" stroke="#595153" stroke-width="14"/>
+  <text x="238" y="200" fill="#595153" font-family="ui-monospace, monospace" font-size="34" letter-spacing="8">TSUMUGI / READING LOG</text>
+</svg>

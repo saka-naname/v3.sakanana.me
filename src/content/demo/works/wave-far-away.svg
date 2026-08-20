@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">波の音、遠く cover</title>
+  <rect width="1200" height="900" fill="#f7f7f4"/>
+  <path d="M0 520c150-98 260 98 410 0s260 98 410 0 250 84 380 0v380H0z" fill="#d0d0ca"/>
+  <path d="M0 612c150-98 260 98 410 0s260 98 410 0 250 84 380 0v288H0z" fill="#999092"/>
+  <path d="M0 706c150-98 260 98 410 0s260 98 410 0 250 84 380 0v194H0z" fill="#595153"/>
+  <path d="M112 164h976M112 230h692" stroke="#595153" stroke-width="8"/>
+  <text x="112" y="334" fill="#6c6465" font-family="ui-monospace, monospace" font-size="30" letter-spacing="6">FIELD RECORDING / COAST 02</text>
+</svg>

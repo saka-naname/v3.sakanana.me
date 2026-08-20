@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">遠い部屋 cover</title>
+  <rect width="1200" height="900" fill="#595153"/>
+  <rect x="104" y="96" width="992" height="708" fill="#6c6465" stroke="#f7f7f4" stroke-width="4"/>
+  <path d="M104 604h992M352 96v508M844 96v508" fill="none" stroke="#b7b7af" stroke-width="5"/>
+  <path d="M104 660c104-76 182 76 286 0s182 76 286 0 182 76 286 0 134 10 134 10" fill="none" stroke="#f7f7f4" stroke-width="8"/>
+  <path d="M104 718c126-48 190 48 316 0s190 48 316 0 190 48 360 0" fill="none" stroke="#d0d0ca" stroke-width="4"/>
+  <text x="142" y="180" fill="#f7f7f4" font-family="ui-monospace, monospace" font-size="32" letter-spacing="7">DISTANT ROOM / 05:18</text>
+</svg>

@@ -2,10 +2,7 @@ import type { CollectionEntry } from "astro:content";
 
 type PublicContentEntry = CollectionEntry<"note"> | CollectionEntry<"work">;
 
-const demoContentDirectories = [
-  "src/content/notes/demo/",
-  "src/content/works/demo/",
-];
+const demoContentDirectories = ["src/content/demo/"];
 
 export function isPublicContentEntry(entry: PublicContentEntry): boolean {
   if (!entry.filePath) {

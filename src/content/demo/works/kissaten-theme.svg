@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">kissaten-theme cover</title>
+  <rect width="1200" height="900" fill="#e4e4df"/>
+  <rect x="98" y="96" width="676" height="708" fill="#f7f7f4" stroke="#595153" stroke-width="6"/>
+  <path d="M178 196h510M178 276h324M178 408h510M178 488h438M178 620h510M178 700h286" stroke="#595153" stroke-width="10"/>
+  <path d="M846 96h256v160H846z" fill="#595153"/>
+  <path d="M846 278h256v160H846z" fill="#6c6465"/>
+  <path d="M846 460h256v160H846z" fill="#999092"/>
+  <path d="M846 642h256v162H846z" fill="#d0d0ca"/>
+</svg>

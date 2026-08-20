@@ -1,0 +1,3 @@
+[submodule "src/content/entries"]
+	path = src/content/entries
+	url = https://github.com/saka-naname/sakanana.me-content.git

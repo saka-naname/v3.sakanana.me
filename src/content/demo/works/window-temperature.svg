@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">窓辺の温度 cover</title>
+  <rect width="1200" height="900" fill="#d0d0ca"/>
+  <path d="M0 0h760v900H0z" fill="#f7f7f4"/>
+  <path d="M760 0h440v900H760z" fill="#999092"/>
+  <path d="M164 126h492v520H164z" fill="#fff" stroke="#595153" stroke-width="7"/>
+  <path d="M410 126v520M164 386h492" fill="none" stroke="#595153" stroke-width="7"/>
+  <path d="M656 646l332 166H520z" fill="#e4e4df"/>
+  <path d="M104 706h616M104 758h412" stroke="#595153" stroke-width="9"/>
+</svg>

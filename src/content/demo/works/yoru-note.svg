@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title">
+  <title id="title">yoru-note cover</title>
+  <rect width="1200" height="900" fill="#595153"/>
+  <rect x="184" y="92" width="832" height="716" fill="#f7f7f4"/>
+  <path d="M302 190h596M302 278h596M302 366h492M302 454h596M302 542h396M302 630h536" stroke="#999092" stroke-width="7"/>
+  <path d="M252 92v716" stroke="#6c6465" stroke-width="5"/>
+  <path d="M184 706h832" stroke="#595153" stroke-width="14"/>
+</svg>

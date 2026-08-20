@@ -12,8 +12,11 @@ const noteSlugByEntry = new Map<string, string>();
 
 const work = defineCollection({
   loader: glob({
-    pattern: "**/[^_]*.{md,mdx}",
-    base: "./src/content/works",
+    pattern: [
+      "entries/works/**/[^_]*.{md,mdx}",
+      "demo/works/**/[^_]*.{md,mdx}",
+    ],
+    base: "./src/content",
     generateId: ({ base, data, entry }) => {
       if (typeof data.slug !== "string") {
         throw new Error(`Work entry ${entry} requires a slug`);
@@ -113,8 +116,11 @@ const work = defineCollection({
 
 const note = defineCollection({
   loader: glob({
-    pattern: "**/[^_]*.{md,mdx}",
-    base: "./src/content/notes",
+    pattern: [
+      "entries/notes/**/[^_]*.{md,mdx}",
+      "demo/notes/**/[^_]*.{md,mdx}",
+    ],
+    base: "./src/content",
     generateId: ({ base, data, entry }) => {
       if (typeof data.slug !== "string") {
         throw new Error(`Note entry ${entry} requires a slug`);
@@ -182,7 +188,7 @@ const note = defineCollection({
 });
 
 const worksCuration = defineCollection({
-  loader: file("./src/content/works-curation.yaml"),
+  loader: file("./src/content/entries/works-curation.yaml"),
   schema: z.object({
     featured: z.array(reference("work")),
   }),
