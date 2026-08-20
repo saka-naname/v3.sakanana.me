@@ -473,6 +473,18 @@ const showUpdatedAt =
     margin-block: 0 22px;
   }
 
+  .note-body ul {
+    list-style-type: disc;
+
+    ul {
+      list-style-type: circle;
+    }
+  }
+
+  .note-body ol {
+    list-style-type: decimal;
+  }
+
   .note-body li + li {
     margin-top: 0.35em;
   }
@@ -641,6 +653,10 @@ const showUpdatedAt =
     margin-block: 40px;
     border: 0;
     border-top: 1px solid var(--color-dessert-dark-2);
+  }
+
+  .note-body strong {
+    font-weight: 700;
   }
 
   @media (hover: none), (pointer: coarse) {
