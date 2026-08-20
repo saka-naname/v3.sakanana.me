@@ -2,6 +2,7 @@
 import "../../styles/globals.css";
 
 import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
@@ -111,7 +112,7 @@ const showUpdatedAt =
     </header>
 
     <article class="note-body" data-note-body>
-      <Content components={{ VideoEmbed }} />
+      <Content components={{ VideoEmbed, Image }} />
     </article>
 
     {
