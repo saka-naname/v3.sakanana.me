@@ -4,4 +4,5 @@
   "assets": {
     "directory": "./dist",
   },
+  "workers_dev": false,
 }
