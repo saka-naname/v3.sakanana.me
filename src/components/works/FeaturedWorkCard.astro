@@ -176,7 +176,6 @@ const url = `/works/${data.slug}/`;
       grid-row: 1 / 4;
       grid-column: 1;
       align-self: stretch;
-      contain: size;
 
       .featured-card {
         display: flex;
@@ -184,8 +183,19 @@ const url = `/works/${data.slug}/`;
       }
 
       .featured-image {
+        /* Fill the shared grid height without measuring the cards after paint. */
+        flex: 1;
+        min-height: 0;
+        aspect-ratio: auto;
+
+        img {
+          position: absolute;
+          inset: 0;
+        }
+      }
+
+      .featured-copy {
         flex: none;
-        aspect-ratio: 4 / 3;
       }
 
       .featured-copy h3 {
