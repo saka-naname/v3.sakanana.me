@@ -53,7 +53,7 @@ export default defineConfig({
     {
       provider: fontProviders.fontsource(),
       name: "IBM Plex Sans JP",
-      cssVariable: "--font-zen-kaku-gothic-antique",
+      cssVariable: "--font-ibm-plex-sans",
       fallbacks: ["sans-serif"],
     },
     {
