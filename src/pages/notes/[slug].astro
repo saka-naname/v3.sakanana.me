@@ -137,7 +137,7 @@ const showUpdatedAt =
                 <Icon name="hugeicons:arrow-left-01" />
                 <span>NEXT</span>
               </span>
-              <strong>{newerNote.data.title}</strong>
+              <span class="navigation-title">{newerNote.data.title}</span>
             </a>
           ) : (
             <span aria-hidden="true" />
@@ -148,7 +148,7 @@ const showUpdatedAt =
                 <span>PREV</span>
                 <Icon name="hugeicons:arrow-right-01" />
               </span>
-              <strong>{olderNote.data.title}</strong>
+              <span class="navigation-title">{olderNote.data.title}</span>
             </a>
           )}
         </nav>
@@ -344,7 +344,7 @@ const showUpdatedAt =
         letter-spacing: 0.1em;
       }
 
-      strong {
+      .navigation-title {
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 0.88rem;
@@ -353,7 +353,7 @@ const showUpdatedAt =
         white-space: nowrap;
       }
 
-      &:is(:hover, :focus-visible) strong {
+      &:is(:hover, :focus-visible) .navigation-title {
         text-decoration: underline;
         text-underline-offset: 0.2em;
       }
@@ -395,7 +395,7 @@ const showUpdatedAt =
           justify-content: end;
         }
 
-        strong {
+        .navigation-title {
           text-align: end;
         }
       }

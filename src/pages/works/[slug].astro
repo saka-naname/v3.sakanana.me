@@ -192,22 +192,22 @@ const platformLabels = {
         <nav class="work-navigation" aria-label="前後の作品">
           {newerWork ? (
             <a href={`/works/${newerWork.data.slug}/`}>
-              <span>
+              <span class="navigation-label">
                 <Icon name="hugeicons:arrow-left-01" />
                 <span>NEXT</span>
               </span>
-              <strong>{newerWork.data.title}</strong>
+              <span class="navigation-title">{newerWork.data.title}</span>
             </a>
           ) : (
             <span aria-hidden="true" />
           )}
           {olderWork && (
             <a class="older-work" href={`/works/${olderWork.data.slug}/`}>
-              <span>
+              <span class="navigation-label">
                 <span>PREV</span>
                 <Icon name="hugeicons:arrow-right-01" />
               </span>
-              <strong>{olderWork.data.title}</strong>
+              <span class="navigation-title">{olderWork.data.title}</span>
             </a>
           )}
         </nav>
@@ -419,7 +419,7 @@ const platformLabels = {
       color: var(--color-text);
       text-decoration: none;
 
-      span {
+      .navigation-label {
         display: inline-flex;
         gap: 0.35em;
         align-items: center;
@@ -430,7 +430,7 @@ const platformLabels = {
         letter-spacing: 0.1em;
       }
 
-      strong {
+      .navigation-title {
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 0.88rem;
@@ -439,7 +439,7 @@ const platformLabels = {
         white-space: nowrap;
       }
 
-      &:is(:hover, :focus-visible) strong {
+      &:is(:hover, :focus-visible) .navigation-title {
         text-decoration: underline;
         text-underline-offset: 0.2em;
       }
@@ -457,7 +457,7 @@ const platformLabels = {
       .older-work {
         text-align: right;
 
-        span {
+        .navigation-label {
           justify-content: end;
         }
       }
@@ -527,7 +527,7 @@ const platformLabels = {
 
       a {
         &.older-work {
-          strong {
+          .navigation-title {
             text-align: end;
           }
         }
