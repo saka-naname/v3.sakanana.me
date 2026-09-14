@@ -52,8 +52,8 @@ export default defineConfig({
     },
     {
       provider: fontProviders.fontsource(),
-      name: "Zen Kaku Gothic Antique",
-      cssVariable: "--font-zen-kaku-gothic-antique",
+      name: "IBM Plex Sans JP",
+      cssVariable: "--font-ibm-plex-sans",
       fallbacks: ["sans-serif"],
     },
     {

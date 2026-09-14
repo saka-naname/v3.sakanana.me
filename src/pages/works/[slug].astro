@@ -192,22 +192,22 @@ const platformLabels = {
         <nav class="work-navigation" aria-label="前後の作品">
           {newerWork ? (
             <a href={`/works/${newerWork.data.slug}/`}>
-              <span>
+              <span class="navigation-label">
                 <Icon name="hugeicons:arrow-left-01" />
                 <span>NEXT</span>
               </span>
-              <strong>{newerWork.data.title}</strong>
+              <span class="navigation-title">{newerWork.data.title}</span>
             </a>
           ) : (
             <span aria-hidden="true" />
           )}
           {olderWork && (
             <a class="older-work" href={`/works/${olderWork.data.slug}/`}>
-              <span>
+              <span class="navigation-label">
                 <span>PREV</span>
                 <Icon name="hugeicons:arrow-right-01" />
               </span>
-              <strong>{olderWork.data.title}</strong>
+              <span class="navigation-title">{olderWork.data.title}</span>
             </a>
           )}
         </nav>
@@ -232,6 +232,7 @@ const platformLabels = {
     font-weight: 700;
     color: var(--color-empress-base);
     text-underline-offset: 0.22em;
+    transition: color 0.15s ease-out;
 
     &:is(:hover, :focus-visible) {
       color: var(--color-text);
@@ -273,7 +274,7 @@ const platformLabels = {
     align-items: center;
     max-width: 760px;
     font-family: var(--font-suse-mono);
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
   }
@@ -419,26 +420,27 @@ const platformLabels = {
       color: var(--color-text);
       text-decoration: none;
 
-      span {
+      .navigation-label {
         display: inline-flex;
         gap: 0.35em;
         align-items: center;
         font-family: var(--font-suse-mono);
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         color: var(--color-empress-base);
         text-transform: uppercase;
         letter-spacing: 0.1em;
       }
 
-      strong {
+      .navigation-title {
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 0.88rem;
-        font-weight: 300;
+        font-weight: 400;
+        color: var(--color-empress-dark-2);
         white-space: nowrap;
       }
 
-      &:is(:hover, :focus-visible) strong {
+      &:is(:hover, :focus-visible) .navigation-title {
         text-decoration: underline;
         text-underline-offset: 0.2em;
       }
@@ -456,7 +458,7 @@ const platformLabels = {
       .older-work {
         text-align: right;
 
-        span {
+        .navigation-label {
           justify-content: end;
         }
       }
@@ -526,7 +528,7 @@ const platformLabels = {
 
       a {
         &.older-work {
-          strong {
+          .navigation-title {
             text-align: end;
           }
         }
