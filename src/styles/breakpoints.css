@@ -1,0 +1,5 @@
+/* Keep in sync with breakpoints.ts */
+@custom-media --breakpoint-xs (width >= 420px);
+@custom-media --breakpoint-sm (width >= 680px);
+@custom-media --breakpoint-md (width >= 768px);
+@custom-media --breakpoint-lg (width >= 960px);

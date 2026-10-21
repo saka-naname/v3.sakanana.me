@@ -158,6 +158,8 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
 <script>
   import EmblaCarousel from "embla-carousel";
 
+  import { breakpoint } from "../styles/breakpoints";
+
   const carousel = document.querySelector<HTMLElement>(
     "[data-home-works-carousel]",
   );
@@ -168,14 +170,14 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
   );
 
   if (carousel && indicators.length > 0) {
-    const desktopLayout = window.matchMedia("(min-width: 680px)");
+    const desktopLayout = window.matchMedia(breakpoint.sm);
     const embla = EmblaCarousel(carousel, {
       align: "start",
       loop: true,
       slides: "[data-home-work-slide]",
       duration: 25,
       breakpoints: {
-        "(min-width: 680px)": { active: false },
+        [breakpoint.sm]: { active: false },
         "(prefers-reduced-motion: reduce)": { duration: 0 },
       },
     });
@@ -430,7 +432,7 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
     padding-bottom: 0;
   }
 
-  @media (width >= 680px) {
+  @media (--breakpoint-sm) {
     .home-works-viewport,
     .home-works-viewport[data-carousel-ready="true"] {
       overflow: visible;
@@ -449,7 +451,7 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
     }
   }
 
-  @media (width >= 768px) {
+  @media (--breakpoint-md) {
     .about-layout {
       grid-template-columns: 160px minmax(0, 1fr);
       gap: 48px;
@@ -467,7 +469,7 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
     }
   }
 
-  @media (width >= 960px) {
+  @media (--breakpoint-lg) {
     .home-work-list {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 32px 24px;

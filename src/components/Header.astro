@@ -550,7 +550,7 @@ const isCurrentPage = (href: string) =>
     margin-bottom: 0;
   }
 
-  @media (width < 768px) {
+  @media not (--breakpoint-md) {
     .desktop-menu {
       display: none;
     }
@@ -560,7 +560,7 @@ const isCurrentPage = (href: string) =>
     }
   }
 
-  @media (width < 420px) {
+  @media not (--breakpoint-xs) {
     .drawer-panel nav {
       padding: 12px 28px;
     }
@@ -594,6 +594,8 @@ const isCurrentPage = (href: string) =>
 </style>
 
 <script>
+  import { breakpoint } from "../styles/breakpoints";
+
   const header = document.querySelector<HTMLElement>("[data-site-header]");
   const dialog = document.querySelector<HTMLDialogElement>("#mobile-menu");
   const openButton =
@@ -657,13 +659,13 @@ const isCurrentPage = (href: string) =>
     header?.classList.remove("menu-open");
     delete document.documentElement.dataset.menuOpen;
   });
-  window.matchMedia("(width >= 768px)").addEventListener("change", (event) => {
+  window.matchMedia(breakpoint.md).addEventListener("change", (event) => {
     if (event.matches) closeMenu(true);
   });
 </script>
 
 <style is:global>
-  @media (width < 768px) {
+  @media not (--breakpoint-md) {
     html {
       scrollbar-gutter: stable;
     }
