@@ -132,6 +132,8 @@ const availableKinds = kindOrder.filter((kind) =>
   import EmblaCarousel from "embla-carousel";
   import Autoplay from "embla-carousel-autoplay";
 
+  import { breakpoint } from "../../styles/breakpoints";
+
   const filterButtons = Array.from(
     document.querySelectorAll<HTMLButtonElement>("[data-filter]"),
   );
@@ -184,7 +186,7 @@ const availableKinds = kindOrder.filter((kind) =>
       stopOnInteraction: false,
       stopOnMouseEnter: true,
       breakpoints: {
-        "(min-width: 960px)": { active: false },
+        [breakpoint.lg]: { active: false },
       },
     });
     const embla = EmblaCarousel(
@@ -195,7 +197,7 @@ const availableKinds = kindOrder.filter((kind) =>
         slides: "[data-featured-slide]",
         duration: 28,
         breakpoints: {
-          "(min-width: 960px)": { active: false },
+          [breakpoint.lg]: { active: false },
           "(prefers-reduced-motion: reduce)": { duration: 0 },
         },
       },
@@ -405,7 +407,7 @@ const availableKinds = kindOrder.filter((kind) =>
     clip-path: inset(50%);
   }
 
-  @media (width >= 680px) {
+  @media (--breakpoint-sm) {
     .work-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -415,7 +417,7 @@ const availableKinds = kindOrder.filter((kind) =>
     }
   }
 
-  @media (width >= 768px) {
+  @media (--breakpoint-md) {
     .heading-row h1 {
       font-size: 3rem;
     }
@@ -429,7 +431,7 @@ const availableKinds = kindOrder.filter((kind) =>
     }
   }
 
-  @media (width >= 960px) {
+  @media (--breakpoint-lg) {
     .featured-carousel-frame {
       max-width: none;
       margin-inline: 0;
