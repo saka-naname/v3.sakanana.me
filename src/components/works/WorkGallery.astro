@@ -339,27 +339,17 @@ const hasMultipleImages = images.length > 1;
     }
   }
 
-  .gallery-control {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
+  .gallery-control,
+  .warning-button {
     color: #fff;
-    pointer-events: auto;
     cursor: pointer;
     background: rgb(0 0 0 / 48%);
     border: 1px solid rgb(255 255 255 / 32%);
-    border-radius: 50%;
     backdrop-filter: blur(4px);
     transition:
       background-color 0.2s ease-out,
       opacity 0.2s ease-out,
       transform 0.2s ease-out;
-
-    svg {
-      width: 24px;
-      height: 24px;
-    }
 
     &:hover {
       background: rgb(0 0 0 / 68%);
@@ -372,6 +362,20 @@ const hasMultipleImages = images.length > 1;
     &:focus-visible {
       outline: 2px solid #fff;
       outline-offset: 3px;
+    }
+  }
+
+  .gallery-control {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    pointer-events: auto;
+    border-radius: 50%;
+
+    svg {
+      width: 24px;
+      height: 24px;
     }
 
     &:disabled {
@@ -438,23 +442,10 @@ const hasMultipleImages = images.length > 1;
     min-height: 44px;
     padding: 8px 16px;
     font-size: 0.85rem;
-    color: var(--color-text);
-    cursor: pointer;
-    background: var(--color-background);
-    border: 1px solid var(--color-dessert-dark-3);
+    border-radius: 999px;
 
     &[hidden] {
       display: none;
-    }
-
-    &:hover {
-      background: var(--color-dessert-dark-1);
-    }
-
-    &:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: 3px;
-      box-shadow: 0 0 0 5px var(--color-empress-dark-2);
     }
   }
 
@@ -527,7 +518,8 @@ const hasMultipleImages = images.length > 1;
 
   @media (prefers-reduced-motion: reduce) {
     .gallery-controls,
-    .gallery-control {
+    .gallery-control,
+    .warning-button {
       transition: none;
     }
   }

@@ -7,6 +7,13 @@ status: released
 images:
   - image: ./window-temperature.svg
     alt: 窓から差し込む朝の光を抽象化したイラスト
+    warning:
+      message: 画像警告の表示確認用です。表示するとイラストを確認できます。
+  - image: ./window-temperature.svg
+    alt: 窓から差し込む朝の光を抽象化したイラスト
+  - image: ./window-temperature.svg
+    alt: 窓から差し込む朝の光を抽象化したイラスト
+    warning: {}
 collaboration:
   type: personal
 links:
@@ -18,3 +25,5 @@ publishedAt: 2026-02-12
 ---
 
 表示確認用のダミー作品です。
+
+同じ画像を3枚並べています。1枚目はカスタム文の警告、2枚目は警告なし、3枚目は既定文の警告を確認できます。
