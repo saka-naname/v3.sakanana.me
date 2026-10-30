@@ -68,10 +68,12 @@ const hasMultipleImages = images.length > 1;
                   <button
                     type="button"
                     class="warning-button warning-hide"
+                    aria-label="隠す"
                     data-warning-hide
                     hidden
                   >
-                    再び隠す
+                    <Icon name="hugeicons:view-off-slash" aria-hidden="true" />
+                    <span class="warning-hide-label">隠す</span>
                   </button>
                 </>
               )}
@@ -453,6 +455,23 @@ const hasMultipleImages = images.length > 1;
     position: absolute;
     top: 8px;
     right: 8px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+
+    svg {
+      flex: none;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .warning-hide-label {
+    display: none;
   }
 
   .gallery-thumbnails {
@@ -501,6 +520,22 @@ const hasMultipleImages = images.length > 1;
   }
 
   @media (--breakpoint-sm) {
+    .warning-button {
+      margin-top: 12px;
+    }
+
+    .warning-hide {
+      top: 16px;
+      right: 16px;
+      width: auto;
+      height: auto;
+      padding: 8px 16px;
+    }
+
+    .warning-hide-label {
+      display: inline;
+    }
+
     .gallery-controls {
       padding-inline: 16px;
     }
