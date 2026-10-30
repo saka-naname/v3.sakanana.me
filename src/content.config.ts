@@ -66,6 +66,9 @@ const work = defineCollection({
           z.object({
             image: image(),
             alt: z.string().min(1),
+            warning: z
+              .object({ message: z.string().trim().optional() })
+              .optional(),
           }),
         )
         .min(1),

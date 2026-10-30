@@ -2,7 +2,6 @@
 import "../../styles/globals.css";
 
 import type { GetStaticPaths } from "astro";
-import { getImage } from "astro:assets";
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
@@ -52,21 +51,6 @@ const { work, newerWork, olderWork } = Astro.props;
 const { data } = work;
 const { Content } = await render(work);
 const canonical = new URL(`/works/${data.slug}/`, Astro.site ?? Astro.url);
-const representativeImage = data.images[0].image;
-const optimizedOpenGraphImage =
-  representativeImage.format === "svg"
-    ? representativeImage
-    : await getImage({
-        src: representativeImage,
-        width: 1200,
-        height: 630,
-        fit: "cover",
-        format: "webp",
-      });
-const openGraphImage = new URL(
-  optimizedOpenGraphImage.src,
-  Astro.site ?? Astro.url,
-);
 
 const collaborationLabel =
   data.collaboration.type === "personal"
@@ -86,7 +70,6 @@ const platformLabels = {
   title={`${data.title} | Works | sakanana.me`}
   description={data.summary}
   canonical={canonical}
-  openGraphImage={openGraphImage}
   openGraphType="article"
 >
   <main class="work-detail">

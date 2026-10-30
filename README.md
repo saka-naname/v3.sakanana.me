@@ -41,6 +41,23 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
+## Image warnings and browser tests
+
+Works gallery images support an optional `warning: {}` for the default warning,
+or `warning: { message: "作品の結末を含みます。" }` for a custom message.
+Keep messages around 40 characters. See [the image warning design](./docs/works-image-warning-design.md).
+
+```sh
+npm run check
+npx playwright install chromium
+npm test
+```
+
+Browser tests cover desktop and mobile viewports. The test runner adds temporary
+fixtures, starts Astro with `astro dev --background` on port 4322, and cleans up
+the fixtures and server afterward. Stop any existing dev server in this worktree
+before running tests. To run one file, use `npm test -- image-warning.spec.ts`.
+
 ## Troubleshooting
 
 If pages or routes remain stale after resolving a duplicate Work `slug` error, restart the background development server:

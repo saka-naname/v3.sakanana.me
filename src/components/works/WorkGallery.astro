@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
 import type { WorkEntry } from "./work-card";
+import WorkImageMask from "./WorkImageMask.astro";
 
 interface Props {
   images: WorkEntry["data"]["images"];
@@ -28,15 +29,54 @@ const hasMultipleImages = images.length > 1;
               role="group"
               aria-roledescription="スライド"
               aria-label={`${index + 1} / ${images.length}`}
+              aria-hidden={index !== 0 || undefined}
+              inert={index !== 0}
             >
-              <Image
-                src={image.image}
-                alt={image.alt}
-                widths={[640, 960, 1280, 1600]}
-                sizes="(min-width: 1288px) 864px, (min-width: 960px) calc(100vw - 376px), calc(100vw - 48px)"
-                loading={index === 0 ? "eager" : "lazy"}
-                layout="none"
-              />
+              <WorkImageMask warning={Boolean(image.warning)} compact={false}>
+                <Image
+                  src={image.image}
+                  alt={image.alt}
+                  widths={[640, 960, 1280, 1600]}
+                  sizes="(min-width: 1288px) 864px, (min-width: 960px) calc(100vw - 376px), calc(100vw - 48px)"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  layout="none"
+                />
+              </WorkImageMask>
+              {image.warning && (
+                <>
+                  <div class="gallery-warning" data-gallery-warning>
+                    <Icon name="hugeicons:alert-02" aria-hidden="true" />
+                    <p class="warning-title">画像に関する注意</p>
+                    <p class="warning-message">
+                      {image.warning.message ||
+                        "内容を確認してから表示してください。"}
+                    </p>
+                    <button
+                      type="button"
+                      class="warning-button"
+                      data-warning-reveal
+                      hidden
+                    >
+                      画像を表示
+                    </button>
+                    <noscript>
+                      <p class="warning-message">
+                        表示するにはJavaScriptを有効にしてください
+                      </p>
+                    </noscript>
+                  </div>
+                  <button
+                    type="button"
+                    class="warning-button warning-hide"
+                    aria-label="隠す"
+                    data-warning-hide
+                    hidden
+                  >
+                    <Icon name="hugeicons:view-off-slash" aria-hidden="true" />
+                    <span class="warning-hide-label">隠す</span>
+                  </button>
+                </>
+              )}
             </figure>
           ))
         }
@@ -75,18 +115,20 @@ const hasMultipleImages = images.length > 1;
           <button
             type="button"
             class="gallery-thumbnail"
-            aria-label={`${index + 1}枚目を表示`}
+            aria-label={`${index + 1}枚目を表示${image.warning ? "（画像に関する注意）" : ""}`}
             aria-pressed={index === 0 ? "true" : "false"}
             data-gallery-thumbnail
           >
-            <Image
-              src={image.image}
-              alt=""
-              widths={[96, 152]}
-              sizes="76px"
-              loading="lazy"
-              layout="none"
-            />
+            <WorkImageMask warning={Boolean(image.warning)}>
+              <Image
+                src={image.image}
+                alt=""
+                widths={[96, 152]}
+                sizes="76px"
+                loading="lazy"
+                layout="none"
+              />
+            </WorkImageMask>
           </button>
         ))}
       </div>
@@ -102,6 +144,9 @@ const hasMultipleImages = images.length > 1;
   );
 
   galleries.forEach((gallery) => {
+    const slides = Array.from(
+      gallery.querySelectorAll<HTMLElement>(".gallery-slide"),
+    );
     const viewport = gallery.querySelector<HTMLElement>(
       "[data-gallery-viewport]",
     );
@@ -114,6 +159,61 @@ const hasMultipleImages = images.length > 1;
     const nextButton = gallery.querySelector<HTMLButtonElement>(
       "[data-gallery-next]",
     );
+
+    const setWarning = (index: number, concealed: boolean) => {
+      const slide = slides[index];
+      const panel = slide.querySelector<HTMLElement>("[data-gallery-warning]");
+      const reveal = slide.querySelector<HTMLButtonElement>(
+        "[data-warning-reveal]",
+      );
+      const hide = slide.querySelector<HTMLButtonElement>(
+        "[data-warning-hide]",
+      );
+      if (!panel || !reveal || !hide) return;
+
+      for (const container of [slide, thumbnails[index]]) {
+        const mask = container?.querySelector<HTMLElement>(".work-image-mask");
+        const content = mask?.querySelector<HTMLElement>(
+          "[data-warning-content]",
+        );
+        mask?.toggleAttribute("data-warning", concealed);
+        if (concealed) content?.setAttribute("aria-hidden", "true");
+        else content?.removeAttribute("aria-hidden");
+      }
+      thumbnails[index]?.setAttribute(
+        "aria-label",
+        `${index + 1}枚目を表示${concealed ? "（画像に関する注意）" : ""}`,
+      );
+      panel.hidden = !concealed;
+      hide.hidden = concealed;
+      reveal.hidden = false;
+    };
+
+    slides.forEach((slide, index) => {
+      const reveal = slide.querySelector<HTMLButtonElement>(
+        "[data-warning-reveal]",
+      );
+      const hide = slide.querySelector<HTMLButtonElement>(
+        "[data-warning-hide]",
+      );
+      if (!reveal || !hide) return;
+      reveal.hidden = false;
+      for (const button of [reveal, hide]) {
+        button.addEventListener("pointerdown", (event) =>
+          event.stopPropagation(),
+        );
+        button.addEventListener("click", () => {
+          const concealed = button === hide;
+          setWarning(index, concealed);
+          (concealed ? reveal : hide).focus({ preventScroll: true });
+        });
+      }
+    });
+
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted)
+        slides.forEach((_, index) => setWarning(index, true));
+    });
 
     if (!viewport || !previousButton || !nextButton || thumbnails.length < 2) {
       return;
@@ -140,6 +240,12 @@ const hasMultipleImages = images.length > 1;
 
     const updateGallery = () => {
       const selectedIndex = embla.selectedScrollSnap();
+
+      slides.forEach((slide, index) => {
+        slide.inert = index !== selectedIndex;
+        if (index === selectedIndex) slide.removeAttribute("aria-hidden");
+        else slide.setAttribute("aria-hidden", "true");
+      });
 
       thumbnails.forEach((thumbnail, index) => {
         thumbnail.setAttribute("aria-pressed", String(index === selectedIndex));
@@ -235,27 +341,17 @@ const hasMultipleImages = images.length > 1;
     }
   }
 
-  .gallery-control {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
+  .gallery-control,
+  .warning-button {
     color: #fff;
-    pointer-events: auto;
     cursor: pointer;
     background: rgb(0 0 0 / 48%);
     border: 1px solid rgb(255 255 255 / 32%);
-    border-radius: 50%;
     backdrop-filter: blur(4px);
     transition:
       background-color 0.2s ease-out,
       opacity 0.2s ease-out,
       transform 0.2s ease-out;
-
-    svg {
-      width: 24px;
-      height: 24px;
-    }
 
     &:hover {
       background: rgb(0 0 0 / 68%);
@@ -269,6 +365,20 @@ const hasMultipleImages = images.length > 1;
       outline: 2px solid #fff;
       outline-offset: 3px;
     }
+  }
+
+  .gallery-control {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    pointer-events: auto;
+    border-radius: 50%;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
 
     &:disabled {
       pointer-events: none;
@@ -278,6 +388,7 @@ const hasMultipleImages = images.length > 1;
   }
 
   .gallery-slide {
+    position: relative;
     display: grid;
     flex: 0 0 100%;
     place-items: center;
@@ -290,6 +401,77 @@ const hasMultipleImages = images.length > 1;
       height: 100%;
       object-fit: contain;
     }
+  }
+
+  .gallery-warning {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: safe center;
+    padding: 12px 52px;
+    overflow-y: auto;
+    color: #fff;
+    text-align: center;
+
+    > svg {
+      flex: none;
+      width: 28px;
+      height: 28px;
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .warning-title {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    font-weight: 700;
+  }
+
+  .warning-message {
+    font-size: clamp(0.75rem, 2.6vw, 0.9rem);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  .warning-button {
+    flex: none;
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 999px;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .warning-hide {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+
+    svg {
+      flex: none;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .warning-hide-label {
+    display: none;
   }
 
   .gallery-thumbnails {
@@ -338,6 +520,22 @@ const hasMultipleImages = images.length > 1;
   }
 
   @media (--breakpoint-sm) {
+    .warning-button:not(.warning-hide) {
+      margin-top: 12px;
+    }
+
+    .warning-hide {
+      top: 16px;
+      right: 16px;
+      width: auto;
+      height: auto;
+      padding: 8px 16px;
+    }
+
+    .warning-hide-label {
+      display: inline;
+    }
+
     .gallery-controls {
       padding-inline: 16px;
     }
@@ -355,7 +553,8 @@ const hasMultipleImages = images.length > 1;
 
   @media (prefers-reduced-motion: reduce) {
     .gallery-controls,
-    .gallery-control {
+    .gallery-control,
+    .warning-button {
       transition: none;
     }
   }

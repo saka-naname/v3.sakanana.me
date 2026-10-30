@@ -1,0 +1,39 @@
+---
+import { getEntry } from "astro:content";
+
+import RelatedWorkCard from "../components/notes/RelatedWorkCard.astro";
+import FeaturedWorkCard from "../components/works/FeaturedWorkCard.astro";
+import HomeWorkCard from "../components/works/HomeWorkCard.astro";
+import WorkCard from "../components/works/WorkCard.astro";
+import WorkGallery from "../components/works/WorkGallery.astro";
+import Layout from "../layouts/Layout.astro";
+
+const work = await getEntry("work", "image-warning-test");
+if (!work) throw new Error("Image warning fixture missing");
+---
+
+<Layout title="画像警告のテスト">
+  <main>
+    <h1>画像警告のテスト</h1>
+    <section aria-label="画像が1枚のギャラリー">
+      <WorkGallery images={work.data.images.slice(2)} title="単一画像" />
+    </section>
+    <section aria-label="カードの表示">
+      <WorkCard work={work} />
+      <HomeWorkCard work={work} slideIndex={0} slideCount={1} />
+      <FeaturedWorkCard
+        work={work}
+        variant="card"
+        slideIndex={0}
+        slideCount={1}
+      />
+      <FeaturedWorkCard
+        work={work}
+        variant="list"
+        slideIndex={0}
+        slideCount={1}
+      />
+      <RelatedWorkCard work={work} />
+    </section>
+  </main>
+</Layout>
