@@ -19,7 +19,7 @@ test("警告画像は表示ボタンを押すまで内容と画像説明を隠�
   await expect(
     gallery.getByRole("img", { name: "結末が分かる画像の説明" }),
   ).toBeVisible();
-  await expect(gallery.getByRole("button", { name: "再び隠す" })).toBeFocused();
+  await expect(gallery.getByRole("button", { name: "隠す" })).toBeFocused();
   await gallery.screenshot({ path: testInfo.outputPath("revealed.png") });
 });
 
@@ -51,7 +51,7 @@ test("再び隠す操作とサムネイルが連動し、画像を切り替え�
   await expect(
     gallery.getByRole("img", { name: "結末が分かる画像の説明" }),
   ).toBeVisible();
-  await gallery.getByRole("button", { name: "再び隠す" }).click();
+  await gallery.getByRole("button", { name: "隠す" }).click();
   await expect(
     gallery.getByRole("img", { name: "結末が分かる画像の説明" }),
   ).toHaveCount(0);
@@ -111,7 +111,7 @@ test("画像が1枚でも警告をキーボードで解除・再表示できる"
   ).toBeVisible();
   await reveal.focus();
   await page.keyboard.press("Enter");
-  const hide = gallery.getByRole("button", { name: "再び隠す" });
+  const hide = gallery.getByRole("button", { name: "隠す" });
   await expect(hide).toBeFocused();
   await expect(
     gallery.getByRole("img", { name: "別の警告画像の説明" }),
