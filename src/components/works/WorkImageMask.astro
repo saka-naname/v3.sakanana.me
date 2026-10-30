@@ -1,0 +1,74 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  warning?: boolean;
+  compact?: boolean;
+}
+
+const { warning = false, compact = true } = Astro.props;
+---
+
+<span class="work-image-mask" data-warning={warning || undefined}>
+  <span
+    class="work-image-content"
+    data-warning-content
+    aria-hidden={warning || undefined}
+  >
+    <slot />
+  </span>
+  {
+    warning && compact && (
+      <span class="warning-icon" role="img" aria-label="画像に関する注意">
+        <Icon name="hugeicons:view-off" aria-hidden="true" />
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .work-image-content {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .work-image-mask {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    &[data-warning]::after {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background: rgb(0 0 0 / 48%);
+    }
+
+    &[data-warning] .work-image-content {
+      filter: blur(32px);
+    }
+  }
+
+  .warning-icon {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    pointer-events: none;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .work-image-mask:not([data-warning]) .warning-icon {
+    display: none;
+  }
+</style>
