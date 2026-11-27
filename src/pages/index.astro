@@ -9,6 +9,7 @@ import heroImage from "../assets/img/0004.png";
 import avatarImage from "../assets/img/avatar.webp";
 import { compareNotesByPublishedAt } from "../components/notes/note";
 import NoteListItem from "../components/notes/NoteListItem.astro";
+import PrototypeSwitcher from "../components/PrototypeSwitcher.astro";
 import HomeWorkCard from "../components/works/HomeWorkCard.astro";
 import { socialLinks } from "../data/site";
 import Layout from "../layouts/Layout.astro";
@@ -153,6 +154,14 @@ const latestNotes = (await getCollection("note", isPublicContentEntry))
       </section>
     </div>
   </main>
+  <PrototypeSwitcher
+    variants={[
+      { key: "N", label: "区別しない" },
+      { key: "A", label: "メタ列に媒体名" },
+      { key: "B", label: "要約の下に一行" },
+      { key: "C", label: "原本記事へ直接リンク" },
+    ]}
+  />
 </Layout>
 
 <script>

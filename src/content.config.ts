@@ -186,6 +186,11 @@ const note = defineCollection({
       updatedAt: z.date().optional(),
       draft: z.boolean().optional(),
 
+      // PROTOTYPE (wayfinder #9): 転載ノートの原本記事
+      originalArticle: z
+        .object({ url: z.url(), medium: z.string().min(1) })
+        .optional(),
+
       relatedWorks: z.array(reference("work")),
     }),
 });

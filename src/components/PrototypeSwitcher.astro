@@ -1,0 +1,95 @@
+---
+// PROTOTYPE (wayfinder #9): ?variant= で [data-proto-variant] を切り替える。開発時だけ出す。
+interface Props {
+  variants: { key: string; label: string }[];
+}
+const { variants } = Astro.props;
+---
+
+{
+  import.meta.env.DEV && (
+    <div class="proto-switcher" data-proto-switcher={JSON.stringify(variants)}>
+      <button type="button" data-dir="-1" aria-label="前のバリエーション">
+        ←
+      </button>
+      <span data-proto-label />
+      <button type="button" data-dir="1" aria-label="次のバリエーション">
+        →
+      </button>
+    </div>
+  )
+}
+
+<script>
+  const bar = document.querySelector<HTMLElement>("[data-proto-switcher]");
+  if (bar) {
+    const variants = JSON.parse(bar.dataset.protoSwitcher ?? "[]") as {
+      key: string;
+      label: string;
+    }[];
+    const label = bar.querySelector<HTMLElement>("[data-proto-label]")!;
+    const apply = (key: string) => {
+      const v = variants.find((x) => x.key === key) ?? variants[0];
+      document
+        .querySelectorAll<HTMLElement>("[data-proto-variant]")
+        .forEach((el) => {
+          el.hidden = !el.dataset.protoVariant!.split(" ").includes(v.key);
+        });
+      label.textContent = `${v.key} (${v.label})`;
+      const url = new URL(location.href);
+      url.searchParams.set("variant", v.key);
+      history.replaceState(null, "", url);
+      return v.key;
+    };
+    let current = apply(
+      new URLSearchParams(location.search).get("variant") ?? variants[0].key,
+    );
+    const step = (dir: number) => {
+      const i = variants.findIndex((x) => x.key === current);
+      current = apply(
+        variants[(i + dir + variants.length) % variants.length].key,
+      );
+    };
+    bar.querySelectorAll<HTMLButtonElement>("button").forEach((b) =>
+      b.addEventListener("click", () => step(Number(b.dataset.dir))),
+    );
+    window.addEventListener("keydown", (e) => {
+      const t = e.target as HTMLElement;
+      if (t.closest("input, textarea, [contenteditable]")) return;
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+  }
+</script>
+
+<style>
+  .proto-switcher {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    z-index: 1000;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    color: #fff;
+    background: #111;
+    border-radius: 999px;
+    box-shadow: 0 4px 18px rgb(0 0 0 / 30%);
+    transform: translateX(-50%);
+
+    button {
+      padding: 2px 8px;
+      color: inherit;
+      cursor: pointer;
+      background: #333;
+      border-radius: 999px;
+    }
+  }
+
+  :global([data-proto-variant][hidden]) {
+    display: none !important;
+  }
+</style>

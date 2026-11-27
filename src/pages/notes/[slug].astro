@@ -13,6 +13,7 @@ import {
   type NoteEntry,
 } from "../../components/notes/note";
 import RelatedWorkCard from "../../components/notes/RelatedWorkCard.astro";
+import PrototypeSwitcher from "../../components/PrototypeSwitcher.astro";
 import VideoEmbed from "../../components/works/VideoEmbed.astro";
 import Layout from "../../layouts/Layout.astro";
 import { isPublicContentEntry } from "../../utils/content";
@@ -60,6 +61,13 @@ const { note, newerNote, olderNote, relatedWorks } = Astro.props;
 const { data } = note;
 const { Content } = await render(note);
 const canonical = new URL(`/notes/${data.slug}/`, Astro.site ?? Astro.url);
+const original = data.originalArticle;
+const originalDisplayUrl = original
+  ? (() => {
+      const u = new URL(original.url);
+      return `${u.host}${u.pathname}`;
+    })()
+  : "";
 const showUpdatedAt =
   data.updatedAt &&
   formatNoteDate(data.updatedAt) !== formatNoteDate(data.publishedAt);
@@ -95,6 +103,17 @@ const showUpdatedAt =
             </span>
           )
         }
+        {
+          original && (
+            <span class="proto-a-meta" data-proto-variant="A">
+              ORIGINAL
+              <a href={original.url} rel="noopener">
+                {original.medium}
+                <Icon name="hugeicons:arrow-up-right-01" />
+              </a>
+            </span>
+          )
+        }
       </div>
 
       <h1>{data.title}</h1>
@@ -111,9 +130,42 @@ const showUpdatedAt =
       }
     </header>
 
+    {
+      original && (
+        <aside class="proto-b-notice" data-proto-variant="B">
+          <p>この記事は {original.medium} でも読めます。</p>
+          <a href={original.url} rel="noopener">
+            {original.medium} で読む
+            <Icon name="hugeicons:arrow-up-right-01" />
+          </a>
+        </aside>
+      )
+    }
+
     <article class="note-body" data-note-body>
       <Content components={{ VideoEmbed, Image }} />
     </article>
+
+    {
+      original && (
+        <section
+          class="proto-c-original"
+          data-proto-variant="C"
+          aria-labelledby="original-article-title"
+        >
+          <h2 id="original-article-title">ORIGINAL ARTICLE</h2>
+          <p>
+            この記事は {original.medium} で公開したものを、Notes
+            にも載せています。
+          </p>
+          <a href={original.url} rel="noopener">
+            <span class="proto-c-medium">{original.medium}</span>
+            <span class="proto-c-url">{originalDisplayUrl}</span>
+            <Icon name="hugeicons:arrow-up-right-01" />
+          </a>
+        </section>
+      )
+    }
 
     {
       relatedWorks.length > 0 && (
@@ -162,6 +214,17 @@ const showUpdatedAt =
       aria-atomic="true"
     >
     </p>
+    {
+      original && (
+        <PrototypeSwitcher
+          variants={[
+            { key: "A", label: "メタ行に一言" },
+            { key: "B", label: "本文前のお知らせ" },
+            { key: "C", label: "本文末尾のセクション" },
+          ]}
+        />
+      )
+    }
   </main>
 </Layout>
 
@@ -359,6 +422,93 @@ const showUpdatedAt =
         text-underline-offset: 0.2em;
       }
     }
+  }
+
+  /* PROTOTYPE (wayfinder #9) */
+  .proto-a-meta a {
+    display: inline-flex;
+    gap: 0.2em;
+    align-items: center;
+    color: var(--color-empress-dark-2);
+    text-underline-offset: 0.2em;
+  }
+
+  .proto-b-notice {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100%, 760px);
+    padding: 16px 20px;
+    margin: 32px auto 0;
+    font-size: 0.9rem;
+    color: var(--color-empress-dark-2);
+    background: var(--color-surface);
+    border: 1px solid var(--color-dessert-dark-2);
+
+    a {
+      display: inline-flex;
+      gap: 0.3em;
+      align-items: center;
+      font-family: var(--font-kiyosuna-sans);
+      font-weight: 700;
+      color: var(--color-empress-dark-2);
+      text-underline-offset: 0.2em;
+    }
+  }
+
+  .proto-c-original {
+    width: min(100%, 760px);
+    padding-top: 26px;
+    margin-inline: auto;
+
+    > h2 {
+      padding-bottom: 12px;
+      font-family: var(--font-kiyosuna-sans);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-empress-dark-2);
+      border-bottom: 1px solid var(--color-dessert-dark-2);
+    }
+
+    > p {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--color-empress-dark-1);
+    }
+
+    > a {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 16px 18px;
+      margin-top: 14px;
+      color: var(--color-empress-dark-2);
+      text-decoration: none;
+      background: var(--color-surface);
+      border: 1px solid var(--color-dessert-dark-2);
+
+      &:is(:hover, :focus-visible) .proto-c-url {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .proto-c-medium {
+    font-family: var(--font-kiyosuna-sans);
+    font-weight: 700;
+  }
+
+  .proto-c-url {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-suse-mono);
+    font-size: 0.8rem;
+    color: var(--color-empress-base);
+    white-space: nowrap;
   }
 
   .visually-hidden {

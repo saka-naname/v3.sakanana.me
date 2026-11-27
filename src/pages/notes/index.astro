@@ -9,6 +9,7 @@ import {
   noteCategoryOrder,
 } from "../../components/notes/note";
 import NoteListItem from "../../components/notes/NoteListItem.astro";
+import PrototypeSwitcher from "../../components/PrototypeSwitcher.astro";
 import Layout from "../../layouts/Layout.astro";
 import { isPublicContentEntry } from "../../utils/content";
 
@@ -90,6 +91,14 @@ const availableCategories = noteCategoryOrder.filter((category) =>
       }
     </section>
   </main>
+  <PrototypeSwitcher
+    variants={[
+      { key: "N", label: "区別しない" },
+      { key: "A", label: "メタ列に媒体名" },
+      { key: "B", label: "要約の下に一行" },
+      { key: "C", label: "原本記事へ直接リンク" },
+    ]}
+  />
 </Layout>
 
 <script>

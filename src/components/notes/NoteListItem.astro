@@ -6,27 +6,71 @@ interface Props {
   variant?: "default" | "compact";
 }
 
+import { Icon } from "astro-icon/components";
+
 const { note, variant = "default" } = Astro.props;
 const { data } = note;
+// PROTOTYPE (wayfinder #9)
+const original = data.originalArticle;
 ---
 
 <article
   class:list={["note-list-item", `variant-${variant}`]}
   data-note-category={data.category}
 >
-  <a href={`/notes/${data.slug}/`}>
+  <a
+    href={`/notes/${data.slug}/`}
+    data-proto-variant={original ? "N A B" : undefined}
+  >
     <div class="note-meta">
       <time datetime={data.publishedAt.toISOString()}>
         {formatNoteDate(data.publishedAt)}
       </time>
       <span>{noteCategoryLabels[data.category]}</span>
+      {
+        original && (
+          <span class="proto-a-label" data-proto-variant="A">
+            {original.medium}
+          </span>
+        )
+      }
     </div>
 
     <div class="note-copy">
       <h3>{data.title}</h3>
       <p>{data.summary}</p>
+      {
+        original && (
+          <p class="proto-b-line" data-proto-variant="B">
+            {original.medium} からの転載
+          </p>
+        )
+      }
     </div>
   </a>
+  {
+    original && (
+      <a href={original.url} rel="noopener" data-proto-variant="C">
+        <div class="note-meta">
+          <time datetime={data.publishedAt.toISOString()}>
+            {formatNoteDate(data.publishedAt)}
+          </time>
+          <span>{noteCategoryLabels[data.category]}</span>
+        </div>
+
+        <div class="note-copy">
+          <h3>
+            {data.title}
+            <span class="proto-c-medium">
+              {original.medium}
+              <Icon name="hugeicons:arrow-up-right-01" />
+            </span>
+          </h3>
+          <p>{data.summary}</p>
+        </div>
+      </a>
+    )
+  }
 </article>
 
 <style>
@@ -88,6 +132,32 @@ const { data } = note;
       color: var(--color-empress-dark-1);
       -webkit-box-orient: vertical;
     }
+  }
+
+  /* PROTOTYPE (wayfinder #9) */
+  .note-meta .proto-a-label {
+    justify-self: start;
+    padding: 1px 6px;
+    color: var(--color-empress-dark-1);
+    border: 1px solid var(--color-dessert-dark-3);
+  }
+
+  .note-copy .proto-b-line {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--color-empress-base);
+  }
+
+  .proto-c-medium {
+    display: inline-flex;
+    gap: 0.15em;
+    align-items: center;
+    margin-left: 0.5em;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--color-empress-base);
+    vertical-align: middle;
   }
 
   .variant-compact {
