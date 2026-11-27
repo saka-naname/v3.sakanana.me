@@ -4,7 +4,7 @@ import { expect, type Page, test } from "@playwright/test";
 const crossPostedNote = "/notes/cross-posted-note-test/";
 const regularNote = "/notes/regular-note-test/";
 const originalUrl = "https://zenn.dev/example/articles/cross-posted-note-test";
-const noticeText = "この記事は Zenn でも読めます。";
+const noticeText = "この記事は Zenn でも読めます";
 const noticeLinkName = "Zenn で読む";
 
 const noticeOf = (page: Page) =>
