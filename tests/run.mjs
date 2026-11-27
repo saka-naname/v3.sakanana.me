@@ -75,9 +75,7 @@ try {
   execFileSync(
     process.execPath,
     [astro, "dev", "--background", "--port", "4322"],
-    {
-      stdio: "inherit",
-    },
+    { stdio: "inherit", env: withTestNotes(validNotes) },
   );
   started = true;
   execFileSync(
