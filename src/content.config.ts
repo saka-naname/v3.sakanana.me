@@ -187,6 +187,14 @@ const note = defineCollection({
       draft: z.boolean().optional(),
 
       relatedWorks: z.array(reference("work")),
+
+      // 原本記事。これがあるノートを転載ノートとみなす
+      originalArticle: z
+        .object({
+          url: z.url(),
+          medium: z.string().min(1),
+        })
+        .optional(),
     }),
 });
 
