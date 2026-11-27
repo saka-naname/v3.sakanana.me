@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { expect, test } from "@playwright/test";
 
-// tests/run.mjs が fixture を置いて本番ビルドした結果を読む
+// tests/run.mjs が src/content/test/notes/ のノートを読み込んで本番ビルドした結果を読む
 const buildRoot = process.env.TEST_BUILD_ROOT;
 const site = "https://sakanana.me";
 

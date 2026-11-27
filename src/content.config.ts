@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import process from "node:process";
 
 import { defineCollection } from "astro/content/config";
 import { file, glob } from "astro/loaders";
@@ -9,6 +10,12 @@ const workEntryBySlug = new Map<string, string>();
 const workSlugByEntry = new Map<string, string>();
 const noteEntryBySlug = new Map<string, string>();
 const noteSlugByEntry = new Map<string, string>();
+
+// テストのときだけ、src/content/test/notes/<TEST_NOTES>/ のノートも読む
+const testNotes = process.env.TEST_NOTES;
+if (testNotes !== undefined && !/^[a-z0-9-]+$/.test(testNotes)) {
+  throw new Error(`Invalid TEST_NOTES: ${testNotes}`);
+}
 
 const work = defineCollection({
   loader: glob({
@@ -122,6 +129,7 @@ const note = defineCollection({
     pattern: [
       "entries/notes/**/[^_]*.{md,mdx}",
       "demo/notes/**/[^_]*.{md,mdx}",
+      ...(testNotes ? [`test/notes/${testNotes}/**/[^_]*.{md,mdx}`] : []),
     ],
     base: "./src/content",
     generateId: ({ base, data, entry }) => {

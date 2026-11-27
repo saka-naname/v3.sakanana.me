@@ -12,7 +12,6 @@ import { join } from "node:path";
 import process from "node:process";
 
 const astro = "node_modules/astro/bin/astro.mjs";
-const noteEntries = "src/content/entries/notes";
 const fixtures = [
   [
     "tests/fixtures/image-warning.md",
@@ -22,51 +21,31 @@ const fixtures = [
     "tests/fixtures/image-warning.astro.txt",
     "src/pages/image-warning-test.astro",
   ],
-  // 本番ビルドでは demo のコンテンツが出ないため、ノートの fixture は entries に置く
-  [
-    "tests/fixtures/cross-posted/cross-posted-note.md",
-    `${noteEntries}/cross-posted-note-test.md`,
-  ],
-  [
-    "tests/fixtures/cross-posted/regular-note.md",
-    `${noteEntries}/regular-note-test.md`,
-  ],
 ];
-const invalidNoteFixtures = [
-  ["url-only", "tests/fixtures/cross-posted/invalid-url-only.md"],
-  ["medium-only", "tests/fixtures/cross-posted/invalid-medium-only.md"],
-];
+// src/content/test/notes/ の下のディレクトリ。TEST_NOTES で選んだものだけを読み込む
+const validNotes = "valid";
+const invalidNotes = ["url-only", "medium-only"];
 const created = [];
 const buildRoot = mkdtempSync(join(tmpdir(), "sakanana-test-"));
 let started = false;
 
-function copyFixture(source, destination) {
-  copyFileSync(source, destination, constants.COPYFILE_EXCL);
-  created.push(destination);
-}
+const withTestNotes = (testNotes) => ({
+  ...process.env,
+  TEST_NOTES: testNotes,
+});
 
-function removeFixture(destination) {
-  unlinkSync(destination);
-  created.splice(created.indexOf(destination), 1);
-}
-
-// 不正な frontmatter のノートを1つずつ置き、コンテンツの同期が失敗するかを記録する
+// 不正な frontmatter のノートを1組ずつ読み込み、コンテンツの同期が失敗するかを記録する
 function checkInvalidNotes() {
   const results = {};
-  for (const [name, source] of invalidNoteFixtures) {
-    const destination = `${noteEntries}/invalid-${name}-test.md`;
-    copyFixture(source, destination);
-    try {
-      const result = spawnSync(process.execPath, [astro, "sync"], {
-        encoding: "utf8",
-      });
-      results[name] = {
-        status: result.status,
-        output: `${result.stdout}\n${result.stderr}`,
-      };
-    } finally {
-      removeFixture(destination);
-    }
+  for (const name of invalidNotes) {
+    const result = spawnSync(process.execPath, [astro, "sync"], {
+      encoding: "utf8",
+      env: withTestNotes(`invalid-${name}`),
+    });
+    results[name] = {
+      status: result.status,
+      output: `${result.stdout}\n${result.stderr}`,
+    };
   }
   writeFileSync(
     join(buildRoot, "invalid-notes.json"),
@@ -83,14 +62,15 @@ try {
       "Stop the existing dev server before running browser tests.",
     );
   }
-  checkInvalidNotes();
   for (const [source, destination] of fixtures) {
-    copyFixture(source, destination);
+    copyFileSync(source, destination, constants.COPYFILE_EXCL);
+    created.push(destination);
   }
+  checkInvalidNotes();
   execFileSync(
     process.execPath,
     [astro, "build", "--outDir", join(buildRoot, "dist")],
-    { stdio: "inherit" },
+    { stdio: "inherit", env: withTestNotes(validNotes) },
   );
   execFileSync(
     process.execPath,
