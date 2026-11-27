@@ -31,3 +31,7 @@ export const formatNoteDate = (date: Date) =>
 export const compareNotesByPublishedAt = (a: NoteEntry, b: NoteEntry) =>
   b.data.publishedAt.getTime() - a.data.publishedAt.getTime() ||
   a.data.slug.localeCompare(b.data.slug);
+
+/** 転載ノートかどうか。originalArticle があるノートを転載ノートとみなす */
+export const isCrossPostedNote = (note: NoteEntry) =>
+  note.data.originalArticle !== undefined;

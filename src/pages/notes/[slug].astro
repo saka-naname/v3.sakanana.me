@@ -9,6 +9,7 @@ import { Icon } from "astro-icon/components";
 import {
   compareNotesByPublishedAt,
   formatNoteDate,
+  isCrossPostedNote,
   noteCategoryLabels,
   type NoteEntry,
 } from "../../components/notes/note";
@@ -59,7 +60,7 @@ export const getStaticPaths = (async () => {
 const { note, newerNote, olderNote, relatedWorks } = Astro.props;
 const { data } = note;
 const { Content } = await render(note);
-const canonical = new URL(`/notes/${data.slug}/`, Astro.site ?? Astro.url);
+const pageUrl = new URL(`/notes/${data.slug}/`, Astro.site ?? Astro.url);
 const showUpdatedAt =
   data.updatedAt &&
   formatNoteDate(data.updatedAt) !== formatNoteDate(data.publishedAt);
@@ -68,7 +69,8 @@ const showUpdatedAt =
 <Layout
   title={`${data.title} | Notes | sakanana.me`}
   description={data.summary}
-  canonical={canonical}
+  url={pageUrl}
+  noindex={isCrossPostedNote(note)}
   openGraphType="article"
 >
   <main class="note-detail">

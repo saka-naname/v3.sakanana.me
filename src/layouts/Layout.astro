@@ -11,7 +11,10 @@ interface Props {
   headerVariant?: "default" | "top";
   title?: string;
   description?: string;
-  canonical?: string | URL;
+  /** ページ自身の URL。canonical と og:url に使う */
+  url?: string | URL;
+  /** 検索結果に出さないページにする。noindex を出し、canonical を出さない */
+  noindex?: boolean;
   openGraphImage?: string | URL;
   openGraphType?: "website" | "article";
 }
@@ -20,13 +23,14 @@ const {
   headerVariant = "default",
   title = "sakanana.me",
   description = "saka-naname（さか）のサイトです。開発、創作などの制作物と、技術メモや日々の記録を掲載しています。",
-  canonical,
+  url,
+  noindex = false,
   openGraphImage,
   openGraphType = "website",
 } = Astro.props;
 
-const canonicalUrl = String(
-  canonical ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url),
+const pageUrl = String(
+  url ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url),
 );
 const openGraphImageUrl = openGraphImage ? String(openGraphImage) : undefined;
 ---
@@ -40,11 +44,12 @@ const openGraphImageUrl = openGraphImage ? String(openGraphImage) : undefined;
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={pageUrl} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={openGraphType} />
-    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:url" content={pageUrl} />
     {
       openGraphImageUrl && (
         <meta property="og:image" content={openGraphImageUrl} />

@@ -6,10 +6,13 @@ import { defineConfig, fontProviders } from "astro/config";
 import icon from "astro-icon";
 import remarkDirective from "remark-directive";
 
+import { noindexPages } from "./src/integrations/noindexPages.mjs";
 import { rehypeExternalLinks } from "./src/plugins/rehypeExternalLinks.mjs";
 import { remarkCalloutDirectives } from "./src/plugins/remarkCallout.mjs";
 
 const site = "https://sakanana.me";
+// 転載ノートなど noindex のページを sitemap から外す
+const noindex = noindexPages();
 
 export default defineConfig({
   site,
@@ -64,5 +67,11 @@ export default defineConfig({
     },
   ],
 
-  integrations: [icon(), mdx(), sitemap()],
+  integrations: [
+    icon(),
+    mdx(),
+    // sitemap より前に置き、sitemap を作る時点で noindex のページを集め終える
+    noindex.integration,
+    sitemap({ filter: noindex.isIndexable }),
+  ],
 });

@@ -50,7 +50,7 @@ export const getStaticPaths = (async () => {
 const { work, newerWork, olderWork } = Astro.props;
 const { data } = work;
 const { Content } = await render(work);
-const canonical = new URL(`/works/${data.slug}/`, Astro.site ?? Astro.url);
+const pageUrl = new URL(`/works/${data.slug}/`, Astro.site ?? Astro.url);
 
 const collaborationLabel =
   data.collaboration.type === "personal"
@@ -69,7 +69,7 @@ const platformLabels = {
 <Layout
   title={`${data.title} | Works | sakanana.me`}
   description={data.summary}
-  canonical={canonical}
+  url={pageUrl}
   openGraphType="article"
 >
   <main class="work-detail">
