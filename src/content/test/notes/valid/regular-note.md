@@ -4,7 +4,8 @@ summary: 転載ノートと比べるための、テスト用の通常のノー�
 slug: regular-note-test
 category: engineering
 tags: []
-publishedAt: 2026-01-03
+# 実際のノートより新しくして、ホームの最新ノート欄に必ず出す
+publishedAt: 2099-01-03
 relatedWorks: []
 ---
 
