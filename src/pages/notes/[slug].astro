@@ -59,6 +59,7 @@ export const getStaticPaths = (async () => {
 
 const { note, newerNote, olderNote, relatedWorks } = Astro.props;
 const { data } = note;
+const { originalArticle } = data;
 const { Content } = await render(note);
 const pageUrl = new URL(`/notes/${data.slug}/`, Astro.site ?? Astro.url);
 const showUpdatedAt =
@@ -112,6 +113,22 @@ const showUpdatedAt =
         )
       }
     </header>
+
+    {
+      originalArticle && (
+        <aside class="original-article" aria-label="ほかの媒体">
+          <p>この記事は {originalArticle.medium} でも読めます。</p>
+          <a
+            href={originalArticle.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {originalArticle.medium} で読む
+            <Icon name="hugeicons:arrow-up-right-01" aria-hidden="true" />
+          </a>
+        </aside>
+      )
+    }
 
     <article class="note-body" data-note-body>
       <Content components={{ VideoEmbed, Image }} />
@@ -306,6 +323,31 @@ const showUpdatedAt =
 
     li::before {
       content: "#";
+    }
+  }
+
+  .original-article {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100%, 760px);
+    padding: 16px 20px;
+    margin: 32px auto 0;
+    font-size: 0.9rem;
+    color: var(--color-empress-dark-2);
+    background: var(--color-surface);
+    border: 1px solid var(--color-dessert-dark-2);
+
+    a {
+      display: inline-flex;
+      gap: 0.3em;
+      align-items: center;
+      font-family: var(--font-kiyosuna-sans);
+      font-weight: 700;
+      color: var(--color-empress-dark-2);
+      text-underline-offset: 0.2em;
     }
   }
 
