@@ -205,7 +205,7 @@ const showUpdatedAt =
 
   noteBody?.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
     const code = pre.querySelector("code");
-    if (!code || pre.querySelector(".code-copy-button")) return;
+    if (!code || pre.parentElement?.classList.contains("code-block")) return;
 
     const button = document.createElement("button");
     button.className = "code-copy-button";
@@ -231,7 +231,11 @@ const showUpdatedAt =
       }
     });
 
-    pre.append(button);
+    // pre はスクロールするので、ボタンが動かないよう外側の要素に置く
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-block";
+    pre.before(wrapper);
+    wrapper.append(pre, button);
   });
 </script>
 
@@ -607,13 +611,22 @@ const showUpdatedAt =
   }
 
   .note-body pre {
-    position: relative;
     padding: 22px;
     margin-block: 28px;
     overflow-x: auto;
     line-height: 1.75;
     background: var(--color-surface) !important;
     border: 1px solid var(--color-dessert-dark-2);
+  }
+
+  /* コピーボタン付きの pre は余白をラッパーに移す。先頭やコールアウト末尾で余白を消すルールが勝つよう、詳細度を下げる */
+  .note-body :where(.code-block) {
+    position: relative;
+    margin-block: 28px;
+  }
+
+  .note-body .code-block > pre {
+    margin-block: 0;
   }
 
   .note-body pre code,
@@ -645,8 +658,8 @@ const showUpdatedAt =
   }
 
   .note-body .code-copy-button:focus-visible,
-  .note-body pre:focus-within .code-copy-button,
-  .note-body pre:hover .code-copy-button {
+  .note-body .code-block:focus-within .code-copy-button,
+  .note-body .code-block:hover .code-copy-button {
     opacity: 1;
   }
 
